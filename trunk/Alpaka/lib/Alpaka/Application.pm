@@ -104,6 +104,16 @@ sub get {
 	return $self->{$key};
 }
 
+sub header { 
+	my ($self, $request, $response, $session) = @_;
+	
+
+}
+
+sub footer { 
+	my ($self, $request, $response, $session) = @_;
+
+}
 
 sub execute { 
 	my ($self) = @_;
@@ -118,6 +128,7 @@ sub execute {
 	}
 	
 	$self->init(); #?
+	$self->header($request, $response, $session);
 
 	$self->request->component_key('DEFAULT') if (!$self->request->component_key());
 	my $component_key = $self->request->component_key();
@@ -130,10 +141,12 @@ sub execute {
 		throw Alpaka::Error::ComponentNotFound('-text'=>"component: $component_key");
 	}
 
+	$self->footer($request, $response, $session);
 	$response->set_cookie("SESSION",$session->id()) if ($session->is_new());
 	$session->save();
 	
 	# clean up operations
+	
 	$self->cleanup();
 	return $response;
 }
