@@ -49,7 +49,8 @@ sub start {
    	$alpaka = Alpaka->new();
 	$httpd = POE::Component::Server::HTTP->new(
 		Port => 8000,
-		ContentHandler => { "/" => \&alpaka_handler, "/html/" => \&html_handler  },
+		#ContentHandler => { "/" => \&alpaka_handler, "/html/" => \&html_handler  },
+		ContentHandler => { "/" => \&alpaka_handler },
 		Headers => { Server => 'Alpaka Web Server',},
 	);
 	$poe_kernel->run();	
@@ -114,15 +115,9 @@ sub usage {
 sub alpaka_handler {
     my ( $request, $response ) = @_;
 
-	$alpaka->run($request, $response);
-	
-	#si es una app -> run, sino, pasar a web
-	#si es un compo -> pasar a run sino web
-	# si es un action ->pasar a run, sino, web
-	
-	#otra:
-	# si es html,gif,png,jpg, etc pasar a web
-	# sino run
+	if (!$alpaka->run($request, $response)){
+		html_handler($request, $response);
+	};
 
     return RC_OK;
 }
@@ -133,15 +128,20 @@ sub html_handler {
 
 	undef $/;
 	my $filename = $request->uri();
-	$filename=~s!http://.*/html/!!;
-	open (FILE,"$Bin/../www/html_doc/$filename");
-    my $out = <FILE>;
+	$filename=~s!http://.*/!!;
+	if (-e "$Bin/../www/html_doc/$filename") {
+		open (FILE,"$Bin/../www/html_doc/$filename");
+   		my $out = <FILE>;
 
-
-    # Build the response.
-    $response->code(RC_OK);
- #   $response->push_header( "Content-Type", "text/html" );
-    $response->content("$out");
+	    # Build the response.
+   		$response->code(RC_OK);
+		#   $response->push_header( "Content-Type", "text/html" );
+    	$response->content("$out");
+	}
+	else {
+		$response->content("<h1>404. Not Found</h1>");
+	}	
+		
 
     # Signal that the request was handled okay.
     return RC_OK;

@@ -47,12 +47,12 @@ sub run {
 
 	if (!defined($self->{applications}->{$application_key})) {
 		my $class= $apps->{application}->{$application_key}->{class};
+		return 0 if !$class;
 		try {	
 			$application =  ${class}->new();
 			$self->{application}->{$application_key} = $application;
 		}catch Error with {
     		my $ex = shift;   # Get hold of the exception object
-			
 			$response->write("<h1>Alpaka::Error Exception</h1><pre>$ex</pre>");
   		}
 	}
@@ -104,11 +104,18 @@ sub run {
 	}
 	finally {
 		$response->send();
+		return 1; 
 	}; 
-  	
+ 		
 }
 
-
+sub is_action {
+	my ($self, $uri) = @_;
+	
+	
+	
+}
+	
 BEGIN {
 	use FindBin qw($Bin);
 	use lib "$Bin/../lib";
