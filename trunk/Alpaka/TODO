@@ -1,0 +1,16 @@
+Alpaka TODO
+
+
+22/07/2004
+* probar que cada action llame a header() y footer() a la webware
+* ver el tema de las urls, tener en cuenta soporte para html,etc en alpaka server
+* confuracion:
+	applications.alpaka   -> applications.map  -> applications.xml
+	alpakad.conf   ->  alpakad.xml # configuracion de server http
+	alpaka.conf   -> alpaka.xml  # configuracion del framework
+	
+
+
+21/07/2004
+* map overwrite previous mapping (bug)
+* change urls to action.do (?)

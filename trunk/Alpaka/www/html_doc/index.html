@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+	<TITLE>Alpaka</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.0  (Linux)">
+	<META NAME="CREATED" CONTENT="20040715;13034400">
+	<META NAME="CHANGED" CONTENT="20040715;19525700">
+	<STYLE>
+	<!--
+		@page { size: 21.59cm 27.94cm }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="es-AR" DIR="LTR">
+<P><IMG SRC="alpaka-logo.gif" NAME="Graphic1" ALIGN=BOTTOM WIDTH=324 HEIGHT=86 BORDER=0>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Alpaka is a MVC
+(Model/View/Controller) framework for building web applications. It's
+on very alfa stage. You shouldn't use this module on production
+environments (probably, you can't, anyway). This, is a &quot;quick &amp;
+dirty&quot; (very quick and very dirty) introduction. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Alpaka is something like </FONT><A HREF="http://struts.apache.org/"><FONT FACE="Bitstream Vera Sans">struts</FONT></A>
+<FONT FACE="Bitstream Vera Sans">(for who know it) but is more
+flexible, agile, and it's Perl!. That is: &quot;There's more than one
+way to do it&quot; and &quot;Easy things should be easy and difficult
+things should be possible&quot;. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Actually, Alpaka is the
+&quot;Controller&quot; part of MVC, you can use several &quot;Views&quot;
+like Template Toolkit or HTML::Template, and you are neither
+restricted in the &quot;Model&quot; part. You can use plain old perl
+objects,  something like Class::DBI, etc. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Alpaka structures the control of
+a web application in &quot;Applications&quot;, &quot;Components&quot;
+and &quot;Actions&quot;. An Application has Components, and
+Components has Actions. The URLs are in the form of
+http://host/application/component/action </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">If you are looking for a more
+stable MVC framework based on perl, check out <A HREF="http://maypole.simon-cozens.org/">Maypole</A>
+from Simon Cozens.</FONT></P>
+<P><FONT FACE="Bitstream Vera Sans">You can download the Alpaka
+distribution from </FONT><A HREF="Alpaka-0.60.tar.gz"><FONT FACE="Bitstream Vera Sans">here</FONT></A><FONT FACE="Bitstream Vera Sans">.
+</FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Note that this module isn't in
+the <A HREF="http://cpan.org/">CPAN</A> yet. It will be uploaded to
+the <A HREF="http://cpan.org/">CPAN</A> when reaches a more stable
+level. The code of this module is somewhat solid, but currently
+requires more work on deployment, unit tests, and documentation. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">To install, unpack the
+distribution &quot;a la perl&quot;: </FONT>
+</P>
+<PRE><FONT FACE="Bitstream Vera Sans">perl Makefile.PL</FONT>
+<FONT FACE="Bitstream Vera Sans">make</FONT>
+<FONT FACE="Bitstream Vera Sans">make install</FONT></PRE><P>
+<FONT FACE="Bitstream Vera Sans">start the server: </FONT>
+</P>
+<PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Bitstream Vera Sans">bin/alpakad start</FONT></PRE><P>
+<FONT FACE="Bitstream Vera Sans">and point your browser to: </FONT>
+</P>
+<PRE STYLE="margin-bottom: 0.5cm"><FONT FACE="Bitstream Vera Sans">http://localhost:8000/example/sample1/action</FONT></PRE><P>
+<FONT FACE="Bitstream Vera Sans">Alpaka also supports any CGI capable
+web server. Use the included cgi-bin/alpaka.cgi script. Support for
+modperl 1 and 2 is under development. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">Beside some standard perl modules
+(like CGI and Storable), Alpaka requires <A HREF="http://poe.perl.org/">POE</A>,
+POE::Component::Server::HTTP, and Error.pm for exception handling. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">No more documentation, for the
+moment. Sorry. </FONT>
+</P>
+<P><FONT FACE="Bitstream Vera Sans">If you are interested in this
+module please join the mailing list: </FONT>
+</P>
+<UL>
+	<LI><P><A HREF="http://web.n-anubis.net/mailman/listinfo/alpaka-devel_soulution.com.ar"><FONT FACE="Bitstream Vera Sans">alpaka-devel@soulution.com.ar</FONT></A></P>
+</UL>
+<P><BR><BR>
+</P>
+<P ALIGN=CENTER><FONT FACE="Bitstream Vera Sans">&copy; Pablo Daniel
+Cano &lt;canpaniel@cpan.org&gt; </FONT>
+</P>
+</BODY>
+</HTML>

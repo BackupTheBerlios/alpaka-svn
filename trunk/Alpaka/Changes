@@ -1,0 +1,6 @@
+Revision history for Perl extension Alpaka.
+
+0.01  Fri Jul  9 17:32:13 2004
+	- original version; created by h2xs 1.23 with options
+		-XAn Alpaka
+
