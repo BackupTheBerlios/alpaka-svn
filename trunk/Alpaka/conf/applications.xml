@@ -1,0 +1,10 @@
+<applications>
+	<application>
+		<name>examples</name>
+		<class>Examples</class>
+	</application>
+	<application>
+		<name>DEFAULT</name>
+		<class>Alpaka::DefaultApplication</class>
+	</application>
+</applications>

@@ -8,7 +8,8 @@ WriteMakefile(
     PREREQ_PM         => {	
     	'CGI' => 0, 
 		'Storable' => 0,
-		'Digest::MD5' => 0
+		'Digest::MD5' => 0,
+		'XML::Simple' => 0
 	},
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Alpaka.pm', # retrieve abstract from module

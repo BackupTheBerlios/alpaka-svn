@@ -17,9 +17,8 @@ use Alpaka::Error::Unsupported;
 #use lib qw(../lib);
 #use lib LIB_DIR;
 
-
-
 our %classes;
+our $apps;
 our $VERSION = '0.60';
 
 sub new {
@@ -47,7 +46,7 @@ sub run {
 	my $application;
 
 	if (!defined($self->{applications}->{$application_key})) {
-		my $class= $classes{$application_key};
+		my $class= $apps->{application}->{$application_key}->{class};
 		try {	
 			$application =  ${class}->new();
 			$self->{application}->{$application_key} = $application;
@@ -114,16 +113,12 @@ BEGIN {
 	use FindBin qw($Bin);
 	use lib "$Bin/../lib";
 	use lib "$Bin/../www";
+	use XML::Simple;
 	
-	open (FILE, "$Bin/../conf/applications.alpaka") || die("error: $!\n");
-	while (<FILE>) {
-		chomp;
-		my ($key, $value) = split /\s*=>\s*/, $_;
-		$classes{$key} = $value;
-	}
-	close (FILE);	
-	foreach my $class (values %classes){
-		eval ("require $class;");
+	$apps = XMLin("$Bin/../conf/applications.xml");
+	
+	foreach my $app (values %{$apps->{application}}){
+		eval ("require $app->{class};");
 	}	
 }
 

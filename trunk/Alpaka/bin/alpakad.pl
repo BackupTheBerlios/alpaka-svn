@@ -115,6 +115,14 @@ sub alpaka_handler {
     my ( $request, $response ) = @_;
 
 	$alpaka->run($request, $response);
+	
+	#si es una app -> run, sino, pasar a web
+	#si es un compo -> pasar a run sino web
+	# si es un action ->pasar a run, sino, web
+	
+	#otra:
+	# si es html,gif,png,jpg, etc pasar a web
+	# sino run
 
     return RC_OK;
 }
