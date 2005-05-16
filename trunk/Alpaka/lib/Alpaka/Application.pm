@@ -2,21 +2,54 @@ package Alpaka::Application;
 
 use strict;
 
-use CGI qw( cgi ); 
-use Alpaka::Response::Factory;
-use Alpaka::Session::Factory;
-use CGI::Carp qw(set_message);
-use CGI::Cookie;
-use Error qw(:try);
-use Alpaka::Error::Component;
-use Alpaka::Error::ComponentNotFound;
-use Alpaka::Error::Unsupported;
-use Alpaka::Default;
+use Apache2;
+use Apache::RequestRec ( ); # for $r->content_type
+use Apache::RequestIO ( );  # for $r->print
+use Apache::Request;
+use Apache::Const -compile => 'OK';
 
+use Alpaka::Response::ModPerl2;
+use Alpaka::Request::ModPerl2;
+use Alpaka::Session::File;
 
-$WebApp::DEBUG=1;
+use Data::Dumper;
+our $DEBUG = 1;
 
-sub new {
+sub handler : method {
+    my($class, $r) = @_;
+    
+    #$self = $class->new unless ref $class;
+    my $self = $class->instance;
+
+    my ($compo, $action) = $self->_parse_action( $r->path_info );
+    
+    $self->request( Alpaka::Request::ModPerl2->new( $r ) );
+    $self->response( Alpaka::Response::ModPerl2->new( $r ) );
+    $self->session( Alpaka::Session::File->new( $r ) );
+    $self->session->init( $self ) if $self->{session_support};
+    
+    $self->response->write("<h1> $compo -> $action </h1>");
+        
+    $self->execute( $compo, $action );
+    $self->session->save if $self->{session_support};
+    $self->response->send;
+    
+    return Apache::OK;
+}
+
+sub instance {
+    my $class = shift;
+
+    # get a reference to the _instance variable in the $class package 
+    no strict 'refs';
+    my $instance = \${ "$class\::_instance" };
+
+    defined $$instance
+	? $$instance
+	: ($$instance = $class->_new_instance(@_));
+}
+
+sub _new_instance {
 	my $class = shift;
 	my @args = @_;
 
@@ -24,33 +57,51 @@ sub new {
 	my $self = {};
 	bless($self, $class);
 
-	if ($WebApp::DEBUG){
-		CGI::Carp->import('fatalsToBrowser');
-	}
-
 	#defaults
-	$self->{_auto_session}=1;
+	$self->{session_support} = 1;
+	$self->{base_path} = '/';
 	
 	$self->setup();
 
 	return $self;
 }
 
+sub execute {
+	my ($self, $compo, $action) = @_;
 
-sub debug {
-	my ($self, $debug) = @_;
-	
-	$WebApp::DEBUG=$debug if $debug;
-	return $WebApp::DEBUG;
+    $self->header($self->request, $self->response, $self->session, $self);
+    if ($compo) {
+        my $component =  $self->{_map}->{$compo};
+    	eval ("require $component;");
+    	if ($@) {
+    	   $self->response->write("<h1>Component Not Found</h1>");
+    	}
+    	else {
+        	eval {
+        	   $component->instance($self)->execute($action);
+        	};
+        	if ($@) {
+        	   #$self->response->clear(); # ?
+        	   $self->response->write("<h1>Error executing $compo -> $action</h1>");
+        	   $self->response->write("<pre>$@</pre>") if $DEBUG;
+        	}
+    	}
+    }
+    else {
+        $self->index($self->request, $self->response, $self->session, $self);
+    }
+    $self->footer($self->request, $self->response, $self->session, $self);
+    #$self->dump_objects() if $DEBUG;
+}
+
+sub forward {
+	my ($self, $compo, $action) = @_;
+
+    $self->execute($compo, $action)
 }
 
 sub setup {
 	my $self = shift;
-
-	$self->map( 
-	  	'DEFAULT'=> 'Alpaka::DefaultComponent', 	
-	);
-	
 }
 
 sub init {
@@ -61,94 +112,57 @@ sub cleanup {
 	my $self = shift;
 }
 
-sub auto_session {
-	my ($self, $auto_session) = @_;
-	
-	$self->{_auto_session}=$auto_session if $auto_session;
-	return $self->{_auto_session};
-}
-
 sub response {
 	my ($self, $response) = @_;
 	
-	$self->{_response}=$response if $response;
-	return $self->{_response};
+	$self->{response} = $response if defined $response;
+	return $self->{response};
 }
-
 
 sub request {
 	my ($self, $request) = @_;
 	
-	$self->{_request}=$request if $request;
-	return $self->{_request};
+	$self->{request} = $request if defined $request;
+	return $self->{request};
 }
 
 sub session {
 	my ($self, $session) = @_;
 	
-	$self->{_session}=$session if $session;
-	return $self->{_session};
+	$self->{session} = $session if defined $session;
+	return $self->{session};
 }
 
-
-
-sub set {
-	my ($self, $key, $value) = @_;
+sub session_support {
+	my ($self, $value) = @_;
 	
-	$self->{$key} = $value;
+	$self->{session_support}=$value if defined $value;
+	return $self->{session_support};
 }
 
-sub get {
-	my ($self, $key) = @_;
+sub base_path {
+	my ($self, $value) = @_;
 	
-	return $self->{$key};
+	$self->{base_path}=$value if defined $value;
+	return $self->{base_path};
 }
 
 sub header { 
 	my ($self, $request, $response, $session) = @_;
 	
-
+    return;
 }
 
 sub footer { 
 	my ($self, $request, $response, $session) = @_;
 
+    return;
 }
 
-sub execute { 
-	my ($self) = @_;
-
-	my $response = $self->response();
-	my $request = $self->request();
-
-	my $session = $self->session();
-	if (!$session){
-		$session = $self->session(Alpaka::Session::Factory->create_session($request));
-		$session->init() if $self->{_auto_session};
-	}
+sub index { 
+	my ($self, $request, $response, $session) = @_;
 	
-	$self->init(); #?
-	$self->header($request, $response, $session);
-
-	$self->request->component_key('DEFAULT') if (!$self->request->component_key());
-	my $component_key = $self->request->component_key();
-	$component_key = 'default' if (!$component_key);
-	if (exists($self->{_map}->{$component_key})) {
-		$self->_process_component();
-	}
-	else {
-		#algun tipo de autoload?
-		throw Alpaka::Error::ComponentNotFound('-text'=>"component: $component_key");
-	}
-
-	$self->footer($request, $response, $session);
-	$response->set_cookie("SESSION",$session->id()) if ($session->is_new());
-	$session->save();
-	
-	# clean up operations
-	
-	$self->cleanup();
-	return $response;
+    return;
 }
 
 sub map {
@@ -172,68 +186,31 @@ sub map {
 	}
 }
 
-sub _process_component {
-	my ($self) = @_;
+sub _parse_action {
+	my ( $self, $path ) = @_;
 
-	my $component_key = $self->request->component_key();
-	my $component = $self->{_map}->{$component_key};
-	#$component = "Alpaka::Default";
-#$self->_process_class_name($component);
+    $path =~ m/^\/(.+)\/(.+)\.do$/;
+    my $compo = $1 || $path;
+    my $action = $2 || 'index';
+    $compo = '' if $compo =~ m/\.do$/;
+    $compo =~ s/^\///;
+    $compo =~ s/\/$//;
 
-	if ( ref($component) && $component->isa('Alpaka::Component')) { # es un obj de clase Component
-	#if ( 0) { # es un obj de clase Component
-		$self->_process_object($component);
-	}
-	#elsif ( $component=~m/^[A-Z].*/) { # es una nombre de clase
-	elsif ( $component=~m/^[A-Z]*/) { # es una nombre de clase
-	#elsif (1) { # es una nombre de clase
-		$self->_process_class_name($component);
-	}
-	else { 
-		throw Alpaka::Error::Unsupported ("Mapping not supported, on '$component_key'");
-	}
+    return ($compo, $action);
 }
 
+sub dump_objects {
+    my $self = shift;
+    
+    $self->response->write( '<h1>Request :</h1>' );
+    $self->response->write( '<pre>' );
+    $self->response->write( $self->request->as_string );
+    $self->response->write( '</pre>' );
 
-sub _process_object {
-	my ($self, $component) = @_;
-
-	my $component_key = $self->request->component_key();
-	$component->application($self);
-	my $obj = $component;
-	
-
-	
-	$obj->execute($self->request, $self->response, $self->session);
- 
-	
-}
-
-sub _process_class_name {
-	my ($self, $component) = @_;
-
-	my $component_key = $self->request->component_key();
-
-	eval ("require $component;");
-	my $object = ${component}->new($self);
-
-	if ($object->isa('Alpaka::Component')) {
-		$self->_process_object($object);
-	}
-	else { 
-		throw Alpaka::Error::Unsupported ("Mapping not supported, on '$component_key'");
-	}
-}
-
-
-BEGIN {
-	sub handle_errors {
-		my $message = shift;
-		require Alpaka::Error;
-		throw Alpaka::Error ('-text' => $message);
-	}
-
-	set_message(\&handle_errors);
+    $self->response->write( '<h1>Session :</h1>' );
+    $self->response->write( '<pre>' );
+    $self->response->write( $self->session->as_string );
+    $self->response->write( '</pre>' );
 }
 
 1;

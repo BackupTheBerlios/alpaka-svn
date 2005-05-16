@@ -1,56 +1,78 @@
 package Alpaka::Component;
 
 use strict; 
-use Alpaka::Error::Component;
-use Alpaka::Error::ActionNotFound;
-sub new {
+
+sub instance {
+    my $class = shift;
+
+    # get a reference to the _instance variable in the $class package 
+    no strict 'refs';
+    my $instance = \${ "$class\::_instance" };
+
+    defined $$instance
+	? $$instance
+	: ($$instance = $class->_new_instance(@_));
+}
+
+sub _new_instance {
 	my $class = shift;
 	my $self = {};
 	bless($self, $class);
-	$self->{_application} = shift;	
+	$self->{_app} = shift;	
 	return $self;
 }
 
-sub application {
-	my ($self, $application) = @_;
+sub app {
+	my ($self, $app) = @_;
 	
-	$self->{_application}=$application if $application;
-	return $self->{_application};
+	$self->{_app} = $app if $app;
+	return $self->{_app};
 }
   
 sub execute { 
-	my ($self, $request, $response, $session) = @_;
-	my $action_key = $request->action_key;
-	$self->header($request, $response, $session);
-	if ($action_key) {
-		if ($self->can($action_key) && $action_key ne "execute" && $action_key ne "new"  && $action_key ne "application" && !($action_key =~ m/^_/)) {
-				$self->$action_key($request, $response, $session);
+	my ($self, $action) = @_;
+
+    $action = 'index' unless $action;
+    my $app = $self->app;
+	$self->header($app->request, $app->response, $app->session, $app);
+	if ($action) {
+		if ($self->can($action) && $action ne "execute" && $action ne "instance"
+		    && $action ne "application" && $action ne "header" && $action ne "footer" 
+		    && $action ne "forward" && !($action =~ m/^_/)) {
+				$self->$action($app->request, $app->response, $app->session, $app);
 		}
 		else {
-			throw Alpaka::Error::ActionNotFound( -text=>"action: $action_key");
+		  $app->response->write("<h1>Action Not Found</h1>");
 		}
 	}
 	else {
-		$self->default($request, $response, $session);
+		$self->index($app->request, $app->response, $app->session, $app);
 	}
-	$self->footer($request, $response, $session);
+	$self->footer($app->request, $app->response, $app->session, $app);
 }
 
-sub default { 
+sub forward {
+	my ($self, $action) = @_;
+
+    $self->execute($action);
+}
+
+sub index { 
 	my ($self, $request, $response, $session) = @_;
 	
-
+    return;
 }
 
 sub header { 
 	my ($self, $request, $response, $session) = @_;
 	
-
+    return;
 }
 
 sub footer { 
 	my ($self, $request, $response, $session) = @_;
 
+    return;
 }
 
 1;
