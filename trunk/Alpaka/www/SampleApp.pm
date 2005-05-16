@@ -33,6 +33,7 @@ sub header {
 	$response->write("<html>");
 	$response->write("<head><title>Sample Application</title></head>");
 	$response->write("<body>");
+	$self->response->write("<h4>".$request->compo."->".$request->action."</h4>");
 
 }
 
