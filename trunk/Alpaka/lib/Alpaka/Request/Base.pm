@@ -16,8 +16,33 @@ sub new {
 
 # instance methods
 
+sub _parse_action {
+	my ( $self, $path ) = @_;
+
+    $path =~ m/^\/(.+)\/(.+)\.do$/;
+    my $compo = $1 || $path;
+    my $action = $2 || 'index';
+    $compo = '' if $compo =~ m/\.do$/;
+    $compo =~ s/^\///;
+    $compo =~ s/\/$//;
+
+    return ($compo, $action);
+}
+
 sub _initialize {
 	return;
+}
+
+sub component {
+	return $_[0]->{component};
+}
+
+sub compo {
+	return $_[0]->{component};
+}
+
+sub action {
+	return $_[0]->{action};
 }
 
 sub get {
