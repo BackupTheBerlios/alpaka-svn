@@ -20,17 +20,13 @@ sub handler : method {
     
     #$self = $class->new unless ref $class;
     my $self = $class->instance;
-
-    my ($compo, $action) = $self->_parse_action( $r->path_info );
     
     $self->request( Alpaka::Request::ModPerl2->new( $r ) );
     $self->response( Alpaka::Response::ModPerl2->new( $r ) );
     $self->session( Alpaka::Session::File->new( $r ) );
     $self->session->init( $self ) if $self->{session_support};
-    
-    $self->response->write("<h1> $compo -> $action </h1>");
-        
-    $self->execute( $compo, $action );
+
+    $self->execute( $self->request->compo, $self->request->action );
     $self->session->save if $self->{session_support};
     $self->response->send;
     
@@ -186,18 +182,6 @@ sub map {
 	}
 }
 
-sub _parse_action {
-	my ( $self, $path ) = @_;
-
-    $path =~ m/^\/(.+)\/(.+)\.do$/;
-    my $compo = $1 || $path;
-    my $action = $2 || 'index';
-    $compo = '' if $compo =~ m/\.do$/;
-    $compo =~ s/^\///;
-    $compo =~ s/\/$//;
-
-    return ($compo, $action);
-}
 
 sub dump_objects {
     my $self = shift;
