@@ -59,7 +59,8 @@ sub _new_instance {
 	$self->{base_path} = '/';
 	
 	$self->setup();
-
+	$self->_load_components;
+    
 	return $self;
 }
 
@@ -69,11 +70,7 @@ sub execute {
     $self->header($self->request, $self->response, $self->session, $self);
     if ($compo) {
         my $component =  $self->{_map}->{$compo};
-    	eval ("require $component;");
-    	if ($@) {
-    	   $self->response->write("<h1>Component Not Found</h1>");
-    	}
-    	else {
+    	if ($component) {
         	eval {
         	   $component->instance($self)->execute($action);
         	};
@@ -82,6 +79,9 @@ sub execute {
         	   $self->response->write("<h1>Error executing $compo -> $action</h1>");
         	   $self->response->write("<pre>$@</pre>") if $DEBUG;
         	}
+    	}
+    	else {
+    	   $self->response->write("<h1>Component Not Found</h1>");
     	}
     }
     else {
@@ -101,8 +101,8 @@ sub setup {
 	my $self = shift;
 }
 
-sub init {
-	my $self = shift;
+sub reload {
+	$_[0]->_load_components;
 }
 
 sub cleanup {
@@ -183,7 +183,13 @@ sub map {
 	}
 }
 
-
+sub _load_components {
+    my $self = shift;
+ 
+    foreach my $pckg ( values %{ $self->{_map} } ) {
+        eval "require $pckg";
+    }
+}
 sub dump_objects {
     my $self = shift;
     
