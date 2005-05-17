@@ -14,6 +14,7 @@ use Alpaka::Session::File;
 
 use Data::Dumper;
 our $DEBUG = 1;
+our $VERSION = '0.62';
 
 sub handler : method {
     my($class, $r) = @_;
