@@ -16,10 +16,10 @@ use Data::Dumper;
 our $DEBUG = 1;
 our $VERSION = '0.62';
 
+
 sub handler : method {
     my($class, $r) = @_;
     
-    #$self = $class->new unless ref $class;
     my $self = $class->instance;
     
     $self->request( Alpaka::Request::ModPerl2->new( $r ) );
@@ -68,25 +68,22 @@ sub execute {
 	my ($self, $compo, $action) = @_;
 
     $self->header($self->request, $self->response, $self->session, $self);
-    if ($compo) {
-        my $component =  $self->{_map}->{$compo};
-    	if ($component) {
-        	eval {
-        	   $component->instance($self)->execute($action);
-        	};
-        	if ($@) {
-        	   #$self->response->clear(); # ?
-        	   $self->response->write("<h1>Error executing $compo -> $action</h1>");
-        	   $self->response->write("<pre>$@</pre>") if $DEBUG;
-        	}
+
+    my $component =  $self->{_map}->{$compo};
+	if ($component) {
+    	eval {
+    	   $component->instance($self)->execute($action);
+    	};
+    	if ($@) {
+    	   #$self->response->clear(); # ?
+    	   $self->response->write("<h1>Error executing $compo -> $action</h1>");
+    	   $self->response->write("<pre>$@</pre>") if $DEBUG;
     	}
-    	else {
-    	   $self->response->write("<h1>Component Not Found</h1>");
-    	}
-    }
-    else {
-        $self->index($self->request, $self->response, $self->session, $self);
-    }
+	}
+	else {
+	   $self->response->write("<h1>Component Not Found</h1>");
+	}
+
     $self->footer($self->request, $self->response, $self->session, $self);
     #$self->dump_objects() if $DEBUG;
 }
@@ -99,6 +96,8 @@ sub forward {
 
 sub setup {
 	my $self = shift;
+    
+	$self->map( '_default'  =>  'Alpaka::Index' );
 }
 
 sub reload {
@@ -156,7 +155,7 @@ sub footer {
     return;
 }
 
-sub index { 
+sub index {  #hmmm, sacar y poner default component? hmmm, psee...
 	my ($self, $request, $response, $session) = @_;
 	
     return;
@@ -186,8 +185,9 @@ sub map {
 sub _load_components {
     my $self = shift;
  
-    foreach my $pckg ( values %{ $self->{_map} } ) {
-        eval "require $pckg";
+    foreach my $package ( values %{ $self->{_map} } ) {
+        eval "require $package";
+        # alert if missing packages ?
     }
 }
 sub dump_objects {

@@ -2,8 +2,9 @@ package SampleApp::Example1;
 use strict;
   
 use base 'Alpaka::Component';
+our $_actions = {};
 
-sub example1 {
+sub example1 : action {
     my ($self, $request, $response, $session, $app) = @_;
     
     my $count = $session->get('count') || 0;
@@ -14,7 +15,7 @@ sub example1 {
 }
 
 
-sub index {
+sub index : action {
     my ($self, $request, $response, $session, $app) = @_;
     
     $self->forward('example1');

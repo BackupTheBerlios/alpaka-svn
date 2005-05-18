@@ -25,6 +25,7 @@ sub _parse_action {
     $compo = '' if $compo =~ m/\.do$/;
     $compo =~ s/^\///;
     $compo =~ s/\/$//;
+    $compo = $compo || '_default';
 
     return ($compo, $action);
 }

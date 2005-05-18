@@ -1,6 +1,31 @@
 package Alpaka::Component;
 
 use strict; 
+use Data::Dumper;
+use attributes;
+
+sub _actions {
+    my $obclass = shift;	
+    my $class   = ref($obclass) || $obclass;
+    my $varname = $class . "::_actions";
+    no strict "refs"; 	# to access package data symbolically
+    $$varname = shift if @_;
+    return \%$varname;
+}  
+
+sub MODIFY_CODE_ATTRIBUTES {
+    my ( $class, $code, $attr ) = @_;
+    my $actions = $class->_actions;
+    $actions->{ $code } = 1 if ( $attr eq 'action' );
+    return ();
+}
+
+sub FETCH_CODE_ATTRIBUTES {
+    my ( $class, $code ) = @_;
+    my $actions = $class->_actions;
+    return $actions->{ $code } ;
+}
+
 
 sub instance {
     my $class = shift;
@@ -36,9 +61,7 @@ sub execute {
     my $app = $self->app;
 	$self->header($app->request, $app->response, $app->session, $app);
 	if ($action) {
-		if ($self->can($action) && $action ne "execute" && $action ne "instance"
-		    && $action ne "application" && $action ne "header" && $action ne "footer" 
-		    && $action ne "forward" && !($action =~ m/^_/)) {
+        if ( attributes::get( $self->can( $action ) ) ) {
 				$self->$action($app->request, $app->response, $app->session, $app);
 		}
 		else {
@@ -57,7 +80,7 @@ sub forward {
     $self->execute($action);
 }
 
-sub index { 
+sub index : action { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
