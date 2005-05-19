@@ -16,7 +16,7 @@ sub setup {
 	);
 }
 
-sub header { 
+sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
 	$response->write("<html>");
@@ -26,7 +26,7 @@ sub header {
 
 }
 
-sub footer { 
+sub end { 
 	my ($self, $request, $response, $session) = @_;
 
     $response->write("</body>");
