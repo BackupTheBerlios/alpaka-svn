@@ -4,6 +4,10 @@ use strict;
 use Data::Dumper;
 use attributes;
 
+our %_bad_names = qw( 
+    execute 1 forward 1 begin 1 end 1 app 1 MODIFY_CODE_ATTRIBUTES 1 FETCH_CODE_ATTRIBUTES 1
+);
+
 sub _actions {
     my $obclass = shift;	
     my $class   = ref($obclass) || $obclass;
@@ -59,25 +63,33 @@ sub execute {
 
     $action = 'index' unless $action;
     my $app = $self->app;
-	$self->header($app->request, $app->response, $app->session, $app);
+	$self->begin($app->request, $app->response, $app->session, $app);
 	if ($action) {
-        if ( attributes::get( $self->can( $action ) ) ) {
-				$self->$action($app->request, $app->response, $app->session, $app);
-		}
-		else {
-		  $app->response->write("<h1>Action Not Found</h1>");
-		}
+        $self->_execute($action);
 	}
 	else {
 		$self->index($app->request, $app->response, $app->session, $app);
 	}
-	$self->footer($app->request, $app->response, $app->session, $app);
+	$self->end($app->request, $app->response, $app->session, $app);
 }
+
+sub _execute { 
+	my ($self, $action) = @_;
+    my $app = $self->app;
+
+    if ( attributes::get( $self->can( $action ) ) && !$_bad_names{$action} && !($action =~ m/^_/) ) {
+        $self->$action($app->request, $app->response, $app->session, $app);
+	}
+	else {
+	   $app->response->write("<h1>Action Not Found</h1>");
+	}
+}
+
 
 sub forward {
 	my ($self, $action) = @_;
 
-    $self->execute($action);
+    $self->_execute($action);
 }
 
 sub index : action { 
@@ -86,13 +98,13 @@ sub index : action {
     return;
 }
 
-sub header { 
+sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
 }
 
-sub footer { 
+sub end { 
 	my ($self, $request, $response, $session) = @_;
 
     return;

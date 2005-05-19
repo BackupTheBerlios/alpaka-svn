@@ -67,12 +67,20 @@ sub _new_instance {
 sub execute {
 	my ($self, $compo, $action) = @_;
 
-    $self->header($self->request, $self->response, $self->session, $self);
+    $self->begin($self->request, $self->response, $self->session, $self);
+    $self->_execute($compo, $action);
+    $self->end($self->request, $self->response, $self->session, $self);
+    #$self->dump_objects() if $DEBUG;
+}
 
+sub _execute {
+	my ($self, $compo, $action, $dispatcher ) = @_;
+	
+	$dispatcher ||= 'execute';
     my $component =  $self->{_map}->{$compo};
 	if ($component) {
     	eval {
-    	   $component->instance($self)->execute($action);
+    	   $component->instance($self)->$dispatcher( $action );
     	};
     	if ($@) {
     	   #$self->response->clear(); # ?
@@ -83,15 +91,12 @@ sub execute {
 	else {
 	   $self->response->write("<h1>Component Not Found</h1>");
 	}
-
-    $self->footer($self->request, $self->response, $self->session, $self);
-    #$self->dump_objects() if $DEBUG;
 }
-
+	
 sub forward {
 	my ($self, $compo, $action) = @_;
 
-    $self->execute($compo, $action)
+    $self->_execute($compo, $action, 'forward')
 }
 
 sub setup {
@@ -143,13 +148,13 @@ sub base_path {
 	return $self->{base_path};
 }
 
-sub header { 
+sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
 }
 
-sub footer { 
+sub end { 
 	my ($self, $request, $response, $session) = @_;
 
     return;
