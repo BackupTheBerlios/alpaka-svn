@@ -77,7 +77,7 @@ sub _execute {
 	my ($self, $compo, $action, $dispatcher ) = @_;
 	
 	$dispatcher ||= 'execute';
-    my $component =  $self->{_map}->{$compo};
+    my $component =  $self->{_map}->{$compo} || $compo;
 	if ($component) {
     	eval {
     	   $component->instance($self)->$dispatcher( $action );
