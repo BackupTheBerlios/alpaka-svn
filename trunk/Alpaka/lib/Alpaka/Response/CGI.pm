@@ -51,20 +51,16 @@ sub send {
 sub set_cookie {
 	my ($self, $c) = @_;
     
-    warn "10";
-    return unless $c->name;
-    warn "11"; 
+    return unless ($c->{name} && $c->{value});
     my $cookie = CGI::Cookie->new(
-        -name    => $c->name,
-        -value   => $c->value,
-        -expires => $c->expires,
-        -domain  => $c->domain,
-        -path    => $c->path,
-        -secure  => $c->secure
+        -name    => $c->{name},
+        -value   => $c->{value},
+        -expires => $c->{expires},
+        -domain  => $c->{domain},
+        -path    => $c->{path},
+        -secure  => $c->{secure}
     );
-    warn "12"; 
-    push @{ $self->{cookies} }, $cookie;
-    warn "13"; 
+    push @{ $self->{cookies} }, $cookie; 
     return;
 }
 

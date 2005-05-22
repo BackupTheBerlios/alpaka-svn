@@ -2,10 +2,7 @@ package Alpaka::Session::Base;
 
 use strict;
 
-
 use Digest::MD5 qw(md5_hex);
-use Alpaka::Cookie;
-use Data::Dumper;
 
 sub new {
 	my $class = shift;
@@ -26,7 +23,7 @@ sub init {
     my ($self, $app) = @_;
     
     my $cookie = $self->{request}->get_cookie('SESSION');
-    $self->{id} = $cookie->value;
+    $self->{id} = $cookie->{value} if $cookie;
     
     if ($self->{id}) {
         $self->load();
@@ -34,14 +31,12 @@ sub init {
     else {
         $self->{id} = $self->_generate_id;   
         $self->{response}->set_cookie( 
-            Alpaka::Cookie->new(
-                    name    => 'SESSION',
-                    value   => $self->{id},
-                    expires => undef,
-                    domain  => '',
-                    path    => '/',
-                    secure  => 0
-            )
+            {
+                name    => 'SESSION',
+                value   => $self->{id},
+                path    => '/',
+                secure  => 0
+            }
         );  
     }
 }
@@ -74,14 +69,12 @@ sub close() {
 	
     $self->{id} = undef;
     $self->{response}->set_cookie( 
-        Alpaka::Cookie->new(
+        {
             name    => 'SESSION',
             value   => $self->{id},
-            expires => '',
-            domain  => '',
             path    => '/',
             secure  => 0
-        )
+        }
     );
 }
 

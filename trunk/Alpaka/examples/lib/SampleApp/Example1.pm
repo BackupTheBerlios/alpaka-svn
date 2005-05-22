@@ -59,6 +59,10 @@ sub request : action {
     $response->write('<li>Remote Address : ' . $request->remote_address);
     $response->write('<li>Method : ' . $request->method);
     $response->write('<li>User : ' . $request->user);
+    $response->write('<li>User Agent: ' . $request->user_agent);
+    $response->write('<li>Referer: ' . $request->referer);
+    $response->write('<li>Accept: ' . $request->accept);
+    $response->write('<li>Accept Encoding: ' . $request->accept_encoding);
     
     $response->write('</ul>');
     $response->write('<a href="../">back</a></h3>');

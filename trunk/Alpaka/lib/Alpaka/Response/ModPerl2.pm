@@ -50,15 +50,17 @@ sub send {
 sub set_cookie {
 	my ($self, $c) = @_;
     
-    return unless $c->name;
+    return unless ($c->{name} && $c->{value});
     my $cookie = Apache::Cookie->new($self->{r},
-        -name    => $c->name,
-        -value   => $c->value,
-        -expires => $c->expires,
-        -domain  => $c->domain,
-        -path    => $c->path,
-        -secure  => $c->secure,
+        -name => $c->{name},
+        -value =>$c->{value},
     );
+
+    $cookie->expires( $c->{expires} ) if defined $c->{expires};
+    $cookie->domain( $c->{domain} ) if defined $c->{domain};
+    $cookie->path( $c->{path} )  if defined $c->{path};
+    $cookie->secure( $c->{secure} ) if defined $c->{secure};
+
     $cookie->bake;
     return;
 }

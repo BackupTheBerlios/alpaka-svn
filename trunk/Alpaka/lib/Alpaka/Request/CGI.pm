@@ -10,53 +10,76 @@ sub _initialize {
 	my $self = shift;
 
 
-    $self->{req} = CGI->new();
+    $self->{r} = CGI->new();
     ( $self->{component}, $self->{action} ) 
-        = $self->_parse_action( $self->{req}->path_info );
+        = $self->_parse_action( $self->{r}->path_info );
 
 	return $self;
 }
 
-sub req {
-    return $_[0]->{req};
+sub r {
+    return $_[0]->{r};
 }
 
 sub get {
 	my ($self, $key) = @_;
 	
-    return $self->{req}->param($key);
+    return $self->{r}->param($key);
 }
 
 sub params {
 	my $self = shift;
 	
-    return $self->{req}->Vars;
+    return $self->{r}->Vars;
 }
 
 sub remote_host {
 	my $self = shift;
 	
-	return $self->{req}->http('Remote-Host')
+	return $self->{r}->remote_host;
 }
 
 sub remote_address {
 	my $self = shift;
 	
-	return $self->{req}->http('Remote-Address')
+	return $self->{r}->remote_host;
 }
 
 sub method {
 	my $self = shift;
 	
-	return $self->{req}->request_method()
+	return $self->{r}->request_method;
 }
 
 sub user {
 	my $self = shift;
 	
-	undef
+	return $self->{r}->remote_user;
 }
 
+sub user_agent {
+	my $self = shift;
+	
+	return $self->{r}->http('User-Agent')
+}
+
+sub referer {
+	my $self = shift;
+	
+	return $self->{r}->http('Referer');
+}
+
+sub accept {
+	my $self = shift;
+	
+	return $self->{r}->http('Accept');
+}
+
+sub accept_encoding {
+	my $self = shift;
+	
+	return $self->{r}->http('Accept-Encoding');
+}
 #cookie management
 
 sub get_cookie {
@@ -65,16 +88,16 @@ sub get_cookie {
 	my %cookies = CGI::Cookie->fetch;
 	my $cookie = $cookies{$key};
     if ($cookie) {
-        return Alpaka::Cookie->new(
+        return {
             name    => $key,
             value   => $cookie->value,
             expires => $cookie->expires,
             domain  => $cookie->domain,
             path    => $cookie->path,
             secure  => $cookie->secure,
-        );
+        };
     }
-    return Alpaka::Cookie->new();
+    return undef;
 }
 
 1;

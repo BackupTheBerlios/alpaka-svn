@@ -9,7 +9,6 @@ use Apache::RequestRec ( ); # for $r->content_type
 use Apache::RequestIO ( );  # for $r->print
 use Apache::Const -compile => 'OK';
 use Apache::Cookie;
-use Alpaka::Cookie;
 
 # override methods;
 
@@ -66,25 +65,47 @@ sub user {
 	return $self->{r}->user;
 }
 
+sub user_agent {
+	my $self = shift;
+	
+	return $self->{r}->headers_in->get('User-Agent');
+}
+
+sub referer {
+	my $self = shift;
+	
+	return $self->{r}->headers_in->get('Referer');
+}
+
+sub accept {
+	my $self = shift;
+	
+	return $self->{r}->headers_in->get('Accept');
+}
+
+sub accept_encoding {
+	my $self = shift;
+	
+	return $self->{r}->headers_in->get('Accept-Encoding');
+}
+
 #cookie management
 
 sub get_cookie {
 	my ($self, $key) = @_;
 	
     my $cookie = Apache::Cookie->fetch->{$key};
-    #use Data::Dumper;
-    #warn $cookie->expires;
     if ($cookie) {
-        return Alpaka::Cookie->new(
+        return {
             name    => $key,
             value   => $cookie->value,
             expires => $cookie->expires,
             domain  => $cookie->domain,
             path    => $cookie->path,
             secure  => $cookie->secure,
-        );
+        };
     }
-    return Alpaka::Cookie->new();
+    return undef;
 }
 
 1;
