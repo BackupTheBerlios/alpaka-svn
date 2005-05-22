@@ -1,13 +1,8 @@
-package Alpaka::Response::ModPerl2;
+package Alpaka::Response::CGI;
 
 use strict;
 use base 'Alpaka::Response::Base';
-use Apache2;
-use Apache::Request;
-use Apache::Connection;
-use Apache::RequestRec ( ); # for $r->content_type
-use Apache::RequestIO ( );  # for $r->print
-use Apache::Const -compile => 'REDIRECT';
+use CGI qw(:cgi);
 
 # override methods;
 
@@ -19,11 +14,12 @@ sub header {
 }
 
 sub _initialize {
-	my ($self, $r) = @_;
+	my ($self) = @_;
 
-    $self->{r} = $r;
+    $self->{r} = CGI->new();
 	$self->{out} ='';
 	$self->{content_type} = 'text/html';
+	$self->{cookies} = [];
 
 	return $self;
 }
@@ -36,12 +32,17 @@ sub send {
 	my $self = shift;
 	
 	if ($self->{redirect}) {
-        $self->{r}->headers_out->set(Location => $self->{redirect});
-        $self->{r}->status(Apache::REDIRECT);
+	   print $self->{r}->redirect(
+			-uri=>$self->{redirect},
+			-cookie=>[@{$self->{cookies}}],
+		);
 	}
 	else {
-    	$self->{r}->content_type( $self->{content_type} );
-    	$self->{r}->print( $self->{out} );
+    	print $self->{r}->header(
+			-type=>$self->{content_type},
+			-cookie=>[@{$self->{cookies}}],
+		);
+    	print  $self->{out};
 	}
 }
 
@@ -50,18 +51,21 @@ sub send {
 sub set_cookie {
 	my ($self, $c) = @_;
     
+    warn "10";
     return unless $c->name;
-    my $cookie = Apache::Cookie->new($self->{r},
+    warn "11"; 
+    my $cookie = CGI::Cookie->new(
         -name    => $c->name,
         -value   => $c->value,
         -expires => $c->expires,
         -domain  => $c->domain,
         -path    => $c->path,
-        -secure  => $c->secure,
+        -secure  => $c->secure
     );
-    $cookie->bake;
+    warn "12"; 
+    push @{ $self->{cookies} }, $cookie;
+    warn "13"; 
     return;
 }
-
 
 1;

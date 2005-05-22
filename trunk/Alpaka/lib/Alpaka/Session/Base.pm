@@ -2,19 +2,21 @@ package Alpaka::Session::Base;
 
 use strict;
 
-use Apache::Cookie;
-use Digest::MD5 qw(md5_hex);
 
+use Digest::MD5 qw(md5_hex);
+use Alpaka::Cookie;
+use Data::Dumper;
 
 sub new {
 	my $class = shift;
 	my $self = {};
 	bless($self, $class);
 	
-	$self->{r} = shift; 
-	$self->{_new} = 0; # cambiar new a _send_cookie
+	$self->{app} = shift;
+	$self->{request} = $self->{app}->request;
+	$self->{response} = $self->{app}->response;
 	$self->{modified} = 0;
-	#mover session data to $self->{data}
+	$self->{data} = {};
 
 	return $self;
 }
@@ -23,23 +25,24 @@ sub new {
 sub init {
     my ($self, $app) = @_;
     
-    my $cookie = Apache::Cookie->fetch->{SESSION};
-    my $session_id = $cookie->value if $cookie;
-    if ($session_id) {
-        $self->{id} = $session_id;
+    my $cookie = $self->{request}->get_cookie('SESSION');
+    $self->{id} = $cookie->value;
+    
+    if ($self->{id}) {
         $self->load();
-        $self->{_new} = 0;
     }
     else {
-        $self->{id} = $self->_generate_id;
-        my $cookie = Apache::Cookie->new($self->{r},
-            -name    =>  'SESSION',
-            -path    =>  $app->base_path,
-            -value   =>  $self->{id},
-            -expires =>  '+1Y',
-        );
-        $cookie->bake;
-        $self->{_new} = 1;
+        $self->{id} = $self->_generate_id;   
+        $self->{response}->set_cookie( 
+            Alpaka::Cookie->new(
+                    name    => 'SESSION',
+                    value   => $self->{id},
+                    expires => undef,
+                    domain  => '',
+                    path    => '/',
+                    secure  => 0
+            )
+        );  
     }
 }
 
@@ -61,13 +64,18 @@ sub close() {
 		delete $self->{$key} unless ($key=~m/^_/) ;
 	}
 	#unlink session file
+	
     $self->{id} = undef;
-    my $cookie = Apache::Cookie->new($self->{r},
-        -name    =>  'SESSION',
-        -value   =>  $self->{id},
+    $self->{response}->set_cookie( 
+        Alpaka::Cookie->new(
+            name    => 'SESSION',
+            value   => $self->{id},
+            expires => '',
+            domain  => '',
+            path    => '/',
+            secure  => 0
+        )
     );
-    $cookie->bake;
-    $self->{_new} = 1;
 }
 
 
@@ -79,7 +87,7 @@ sub is_new() {
 
 sub get {
 	my ($self, $key) = @_;
-	return $self->{$key};
+	return $self->{data}->{$key};
 }
 
 
@@ -87,10 +95,10 @@ sub set {
 	my ($self, $key, $value) = @_;
 	
 	if ( defined $value ) {
-	   $self->{$key} = $value;
+	   $self->{data}->{$key} = $value;
 	   $self->{modified} = 1;
     };
-	return $self->{$key};
+	return $self->{data}->{$key};
 }
 
 

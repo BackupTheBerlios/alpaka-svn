@@ -9,6 +9,7 @@ sub setup {
 
     $self->session_support(1); 
     $self->base_path('/example'); 
+    $self->app_name('example'); 
     
 	$self->map( 
         '_default'  =>  'SampleApp::Index', 	    

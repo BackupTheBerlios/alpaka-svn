@@ -111,6 +111,18 @@ sub method {
 	return;
 }
 
+sub is_get {
+	my $self = shift;
+	
+	return ($self->method eq 'GET');
+}
+
+sub is_post {
+	my $self = shift;
+	
+	return ($self->method eq 'POST') || 0;
+}
+
 sub as_string {
 	my ($self) = @_;
     return

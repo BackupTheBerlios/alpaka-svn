@@ -1,31 +1,20 @@
-package Alpaka::Request::ModPerl2;
+package Alpaka::Request::CGI;
 
 use strict;
 use base 'Alpaka::Request::Base';
-use Apache2;
-use Apache::Request;
-use Apache::Connection;
-use Apache::RequestRec ( ); # for $r->content_type
-use Apache::RequestIO ( );  # for $r->print
-use Apache::Const -compile => 'OK';
-use Apache::Cookie;
-use Alpaka::Cookie;
-
+use CGI qw( :cgi );
+use CGI::Cookie;
 # override methods;
 
 sub _initialize {
 	my $self = shift;
 
-    $self->{r} = shift;
-    $self->{req} = Apache::Request->new( $self->{r} );
+
+    $self->{req} = CGI->new();
     ( $self->{component}, $self->{action} ) 
-        = $self->_parse_action( $self->{r}->path_info );
+        = $self->_parse_action( $self->{req}->path_info );
 
 	return $self;
-}
-
-sub r {
-    return $_[0]->{r};
 }
 
 sub req {
@@ -41,29 +30,31 @@ sub get {
 sub params {
 	my $self = shift;
 	
-    return $self->{req}->param;
+    return $self->{req}->Vars;
 }
 
 sub remote_host {
-
-	return $_[0]->{r}->connection->remote_host || $_[0]->{r}->connection->get_remote_host;
+	my $self = shift;
+	
+	return $self->{req}->http('Remote-Host')
 }
 
 sub remote_address {
-
-	return $_[0]->{r}->connection->remote_ip;
+	my $self = shift;
+	
+	return $self->{req}->http('Remote-Address')
 }
 
 sub method {
 	my $self = shift;
 	
-	return $self->{r}->method
+	return $self->{req}->request_method()
 }
 
 sub user {
 	my $self = shift;
 	
-	return $self->{r}->user;
+	undef
 }
 
 #cookie management
@@ -71,9 +62,8 @@ sub user {
 sub get_cookie {
 	my ($self, $key) = @_;
 	
-    my $cookie = Apache::Cookie->fetch->{$key};
-    #use Data::Dumper;
-    #warn $cookie->expires;
+	my %cookies = CGI::Cookie->fetch;
+	my $cookie = $cookies{$key};
     if ($cookie) {
         return Alpaka::Cookie->new(
             name    => $key,

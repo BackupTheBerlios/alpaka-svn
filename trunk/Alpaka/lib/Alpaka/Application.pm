@@ -2,14 +2,12 @@ package Alpaka::Application;
 
 use strict;
 
-use Apache2;
-use Apache::RequestRec ( ); # for $r->content_type
-use Apache::RequestIO ( );  # for $r->print
-use Apache::Request;
-use Apache::Const -compile => 'OK';
-
 use Alpaka::Response::ModPerl2;
 use Alpaka::Request::ModPerl2;
+
+use Alpaka::Response::CGI;
+use Alpaka::Request::CGI;
+
 use Alpaka::Session::File;
 
 use Data::Dumper;
@@ -17,22 +15,46 @@ our $DEBUG = 1;
 our $VERSION = '0.62';
 
 
-sub handler : method {
+sub modperl2 : method {
     my($class, $r) = @_;
     
     my $self = $class->instance;
-    
     $self->request( Alpaka::Request::ModPerl2->new( $r ) );
     $self->response( Alpaka::Response::ModPerl2->new( $r ) );
-    $self->session( Alpaka::Session::File->new( $r ) );
+    $self->_handle;
+ 
+    return Apache::OK;
+}
+
+sub modperl1 ($$) {
+    my($class, $r) = @_;
+    
+    my $self = $class->instance;
+    #$self->request( Alpaka::Request::ModPerl1->new( $r ) );
+    #$self->response( Alpaka::Response::ModPerl1->new( $r ) );
+    $self->_handle;
+}
+
+sub cgi {
+    my($class) = @_;
+    
+    my $self = $class->instance;
+    $self->request( Alpaka::Request::CGI->new );
+    $self->response( Alpaka::Response::CGI->new );
+    $self->_handle;
+}
+
+sub _handle {
+    my($self, $type) = @_;
+    
+    $self->session( Alpaka::Session::File->new( $self ) );
     $self->session->init( $self ) if $self->{session_support};
 
     $self->execute( $self->request->compo, $self->request->action );
     $self->session->save if $self->{session_support};
     $self->response->send;
-    
-    return Apache::OK;
 }
+
 
 sub instance {
     my $class = shift;
@@ -148,6 +170,13 @@ sub base_path {
 	return $self->{base_path};
 }
 
+sub app_name {
+	my ($self, $value) = @_;
+	
+	$self->{app_name}=$value if defined $value;
+	return $self->{app_name};
+}
+
 sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
@@ -190,6 +219,7 @@ sub map {
 sub _load_components {
     my $self = shift;
  
+    # do not load if already loaded (how?)
     foreach my $package ( values %{ $self->{_map} } ) {
         eval "require $package";
         # alert if missing packages ?
