@@ -8,12 +8,10 @@ sub setup {
     my $self = shift;
 
     $self->session_support(1); 
-    $self->base_path('/example'); 
-    $self->app_name('example'); 
     
 	$self->map( 
-        '_default'  =>  'SampleApp::Index', 	    
-        'example1'  =>  'SampleApp::Example1', 	
+        '_default'  =>  'SampleApp::Index',    
+        'example1'  =>  'SampleApp::Example1',
 	);
 }
 

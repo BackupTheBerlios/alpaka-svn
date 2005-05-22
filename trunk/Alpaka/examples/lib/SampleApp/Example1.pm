@@ -6,13 +6,14 @@ our $_actions = {};
 
 sub index : action {
     my ($self, $request, $response, $session, $app) = @_;
+    $response->write("<h2>App Path : " . $app->path. "</h2>");
     
     $response->write("<h1>Sample Actions</h1>");
-    $response->write('<h3><a href="hello_world.do">Hello World</a></h3>');
-    $response->write('<h3><a href="counter.do">Counter</a></h3>');
-    $response->write('<h3><a href="hello_world.do">Redirect</a></h3>');
-    $response->write('<h3><a href="forwarding.do">Forward</a></h3>');
-    $response->write('<h3><a href="request.do">Request</a></h3>');
+    $response->write('<h3><a href="example1/hello_world.do">Hello World</a></h3>');
+    $response->write('<h3><a href="example1/counter.do">Counter</a></h3>');
+    $response->write('<h3><a href="example1/redirect.do">Redirect</a></h3>');
+    $response->write('<h3><a href="example1/forwarding.do">Forward</a></h3>');
+    $response->write('<h3><a href="example1/request.do">Request</a></h3>');
         
 }
 
@@ -40,7 +41,7 @@ sub counter : action {
 sub redirect : action {
     my ($self, $request, $response, $session, $app) = @_;
     
-    $response->redirect( $app->base_path . "hello_world.do");
+    $response->redirect( $app->path . "/example1/hello_world.do");
     
 }
 

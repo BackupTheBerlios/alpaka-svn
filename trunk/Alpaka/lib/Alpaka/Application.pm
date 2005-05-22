@@ -21,6 +21,10 @@ sub modperl2 : method {
     my $self = $class->instance;
     $self->request( Alpaka::Request::ModPerl2->new( $r ) );
     $self->response( Alpaka::Response::ModPerl2->new( $r ) );
+    
+    (undef, $self->{path}) = split '/', $self->request->r->uri;
+    $self->{path} = '/' . $self->{path}; 
+    
     $self->_handle;
  
     return Apache::OK;
@@ -41,6 +45,7 @@ sub cgi {
     my $self = $class->instance;
     $self->request( Alpaka::Request::CGI->new );
     $self->response( Alpaka::Response::CGI->new );
+    $self->{path} = $self->request->r->script_name;
     $self->_handle;
 }
 
@@ -170,6 +175,12 @@ sub base_path {
 	return $self->{base_path};
 }
 
+sub path {
+	my ($self, $value) = @_;
+	
+	#$self->{path}=$value if defined $value;
+	return $self->{path};
+}
 sub app_name {
 	my ($self, $value) = @_;
 	

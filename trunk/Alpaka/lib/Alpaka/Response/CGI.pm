@@ -2,7 +2,7 @@ package Alpaka::Response::CGI;
 
 use strict;
 use base 'Alpaka::Response::Base';
-use CGI qw(:cgi);
+use CGI;
 
 # override methods;
 
@@ -28,10 +28,12 @@ sub r {
     return $_[0]->{r};
 }
 
+
 sub send { 
 	my $self = shift;
 	
 	if ($self->{redirect}) {
+	   warn "R to $self->{redirect}";
 	   print $self->{r}->redirect(
 			-uri=>$self->{redirect},
 			-cookie=>[@{$self->{cookies}}],

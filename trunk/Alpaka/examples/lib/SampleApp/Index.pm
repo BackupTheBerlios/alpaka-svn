@@ -6,8 +6,9 @@ use base 'Alpaka::Component';
 
 sub index : action {
     my ($self, $request, $response, $session, $app) = @_;
-    
-    $response->redirect("/example/example1/");
+   
+    $response->redirect($app->path . "/example1");
+    #  $response->write($app->path . "/example1");
 }
 
 
