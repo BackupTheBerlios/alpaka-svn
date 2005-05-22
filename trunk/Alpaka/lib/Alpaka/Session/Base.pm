@@ -51,18 +51,25 @@ sub _generate_id {
 	return substr(md5_hex(time() . md5_hex(time(). {}. rand(). $$)), 0, 16);
 }
 
-sub id() {
+sub id {
 	my ($self) = @_;
 	return $self->{id};
 }
 
 
+sub data {
+	my ($self, $data) = @_;
+	
+	if (defined $data) {
+	   $self->{data} = $data;
+	}
+	return $self->{data};
+}
+
 sub close() {
 	my ($self) = @_;
 	
-	foreach my $key (keys %$self){
-		delete $self->{$key} unless ($key=~m/^_/) ;
-	}
+    $self->{data} = {};
 	#unlink session file
 	
     $self->{id} = undef;

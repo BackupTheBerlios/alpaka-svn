@@ -9,15 +9,14 @@ sub load {
 
 	my $data;
 	eval {$data = retrieve("/tmp/$self->{id}.apksess")};
-
-    $self->{data}= $data
+    $self->data($data);
 } 
 
 sub save {
 	my ($self) = @_;
 
     return unless $self->{modified};
-	my $data = $self->{data};
+	my $data = $self->data;
 	eval {store $data, "/tmp/$self->{id}.apksess"};
 }
 
