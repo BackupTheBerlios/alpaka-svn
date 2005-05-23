@@ -28,10 +28,13 @@ sub hello_world : action {
 sub counter : action {
     my ($self, $request, $response, $session, $app) = @_;
     
+    $session->close if $request->get('reset');
+    
     my $count = $session->get('count') || 0;
     
     $response->write("<h1>Count: $count</h1>");
     $response->write('<a href="counter.do">reload</a><br>');
+    $response->write('<a href="counter.do?reset=1">reset</a><br>');
     $response->write('<a href="../">back</a></h3>');
     
     $count++;

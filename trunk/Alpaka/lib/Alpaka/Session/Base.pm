@@ -67,15 +67,16 @@ sub close() {
     $self->{data} = {};
 	#unlink session file
 	
-    $self->{id} = undef;
     $self->{response}->set_cookie( 
         {
             name    => 'SESSION',
+            expires => 'now',
             value   => $self->{id},
             path    => '/',
             secure  => 0
         }
     );
+    $self->{id} = undef;
 }
 
 

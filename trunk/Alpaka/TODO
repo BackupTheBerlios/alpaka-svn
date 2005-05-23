@@ -1,12 +1,29 @@
 Alpaka TODO
 
-22/05/2005 Fix component/action mapping
+22/05/2005 
+
+* Fix component/action mapping
 http://test.com/app/compo.action
 http://test.com/app/compo.action.do
-
 
 http://test.com/app/compo/action.do 			app:app		comp:compo		action:action
 http://test.com/app/compo/nent/action.do		app:app		comp:compo/nent		action:action
 http://test.com/compo/action.do					app:		comp:compo		action:action
 http://test.com/cgi-bin/alpaka.cgi/app/compo/action.do	app:app		comp:compo		action:action
 http://test.com/cgi-bin/alpaka.cgi/compo/action.do	app:		comp:compo		action:action
+
+* Implement application data set/get
+$app->get( $key );
+$app->set( $key => $value );
+
+* Support ModPerl1
+
+* Change Component a Dispatcher? o Controller?
+
+* Implement as_string method
+
+* To singleton or not to singleton?
+
+* Cahange cgi -> cgi_handler, modperl2 -> modperl2_handler, etc
+
+* Documentation!
