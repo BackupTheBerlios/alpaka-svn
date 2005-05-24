@@ -12,18 +12,20 @@ http://test.com/compo/action.do					app:		comp:compo		action:action
 http://test.com/cgi-bin/alpaka.cgi/app/compo/action.do	app:app		comp:compo		action:action
 http://test.com/cgi-bin/alpaka.cgi/compo/action.do	app:		comp:compo		action:action
 
-* Implement application data set/get
-$app->get( $key );
+* Implement application data set/get 4
+$app->get( $key );	
 $app->set( $key => $value );
 
-* Support ModPerl1
+* Support ModPerl1 3
 
-* Change Component a Dispatcher? o Controller?
+* Change Component a Dispatcher? o Controller?   5
 
-* Implement as_string method
+* oveload "" (as_string) and bool operators
 
 * To singleton or not to singleton?
 
-* Cahange cgi -> cgi_handler, modperl2 -> modperl2_handler, etc
+* Cahange cgi -> cgi_handler, modperl2 -> modperl2_handler, etc  2
 
 * Documentation!
+
+* Session as tied hash (ref)

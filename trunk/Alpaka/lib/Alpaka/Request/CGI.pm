@@ -27,6 +27,12 @@ sub get {
     return $self->{r}->param($key);
 }
 
+sub keys {
+	my $self = shift;
+	
+    return $self->{req}->param;
+}
+
 sub params {
 	my $self = shift;
 	

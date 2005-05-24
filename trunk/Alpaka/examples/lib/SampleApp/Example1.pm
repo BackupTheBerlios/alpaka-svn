@@ -14,6 +14,7 @@ sub index : action {
     $response->write('<h3><a href="example1/redirect.do">Redirect</a></h3>');
     $response->write('<h3><a href="example1/forwarding.do">Forward</a></h3>');
     $response->write('<h3><a href="example1/request.do">Request</a></h3>');
+    $response->write('<h3><a href="example1/dump.do?param1=1&param1=2&param2=a">Dump</a></h3>');
         
 }
 
@@ -73,7 +74,22 @@ sub request : action {
     
 }
 
-
+sub dump : action {
+    my ($self, $request, $response, $session, $app) = @_;
+   
+    $response->write("<h1>Requet :</h1>");
+    $response->write('<pre>');
+    $response->write( $request->as_string );
+    $response->write('</pre>');
+    
+    $response->write("<h1>Session :</h1>");
+    $response->write('<pre>');
+    $response->write( $session->as_string );
+    $response->write('</pre>');
+    
+    $response->write('<a href="../">back</a></h3>');
+}
+    
 sub begin { 
 	my ($self, $request, $response, $session, $app) = @_;
 	

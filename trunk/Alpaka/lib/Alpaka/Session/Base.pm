@@ -3,6 +3,7 @@ package Alpaka::Session::Base;
 use strict;
 
 use Digest::MD5 qw(md5_hex);
+use Data::Dumper;
 
 sub new {
 	my $class = shift;
@@ -118,7 +119,8 @@ sub save {
 
 sub as_string {
 	my ($self) = @_;
-	
-
+    
+    return Dumper($self->data)
 }
+
 1;

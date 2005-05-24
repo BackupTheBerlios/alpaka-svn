@@ -37,10 +37,23 @@ sub get {
     return $self->{req}->param($key);
 }
 
-sub params {
+sub keys {
 	my $self = shift;
 	
     return $self->{req}->param;
+}
+
+sub params {
+	my $self = shift;
+	
+	my @keys = $self->keys;
+	my %params;
+	foreach my $key (@keys) {
+	   my @values = $self->get($key);
+	   $params{$key} = shift @values if (@values == 1);
+	   $params{$key} = \@values if (@values > 1);
+	}
+    return \%params;
 }
 
 sub remote_host {

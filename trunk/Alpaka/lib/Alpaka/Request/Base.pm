@@ -1,6 +1,7 @@
 package Alpaka::Request::Base;
 
 use strict;
+use Data::Dumper;
 
 # class methods;
 
@@ -125,7 +126,8 @@ sub is_post {
 
 sub as_string {
 	my ($self) = @_;
-    return
+    
+    return Dumper($self->params)
 }
 
 1;

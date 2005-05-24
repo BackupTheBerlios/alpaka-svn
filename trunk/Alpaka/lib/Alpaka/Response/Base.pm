@@ -71,7 +71,7 @@ sub output {
 sub as_string {
 	my ($self) = @_;
 	
-    return
+    return $self->{out}
 }
 
 
