@@ -4,18 +4,18 @@ use strict;
 use Data::Dumper;
 use attributes;
 
+#------------------------------
+# Constants
+#------------------------------
+
+#transform to constant
 our %_bad_names = qw( 
     execute 1 forward 1 begin 1 end 1 app 1 MODIFY_CODE_ATTRIBUTES 1 FETCH_CODE_ATTRIBUTES 1
 );
 
-sub _actions {
-    my $obclass = shift;	
-    my $class   = ref($obclass) || $obclass;
-    my $varname = $class . "::_actions";
-    no strict "refs"; 	# to access package data symbolically
-    $$varname = shift if @_;
-    return \%$varname;
-}  
+#------------------------------
+# Class Methods
+#------------------------------
 
 sub MODIFY_CODE_ATTRIBUTES {
     my ( $class, $code, $attr ) = @_;
@@ -30,6 +30,14 @@ sub FETCH_CODE_ATTRIBUTES {
     return $actions->{ $code } ;
 }
 
+sub _actions {
+    my $obclass = shift;	
+    my $class   = ref($obclass) || $obclass;
+    my $varname = $class . "::_actions";
+    no strict "refs"; 	# to access package data symbolically
+    $$varname = shift if @_;
+    return \%$varname;
+}  
 
 sub instance {
     my $class = shift;
@@ -50,6 +58,10 @@ sub _new_instance {
 	$self->{_app} = shift;	
 	return $self;
 }
+
+#------------------------------
+# Instance Methods
+#------------------------------
 
 sub app {
 	my ($self, $app) = @_;
@@ -85,12 +97,15 @@ sub _execute {
 	}
 }
 
-
 sub forward {
 	my ($self, $action) = @_;
 
     $self->_execute($action);
 }
+
+#------------------------------
+# Override Instance Methods
+#------------------------------
 
 sub index : action { 
 	my ($self, $request, $response, $session) = @_;

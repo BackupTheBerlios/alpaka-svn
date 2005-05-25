@@ -2,18 +2,34 @@ package Alpaka::Application;
 
 use strict;
 
-use Alpaka::Response::ModPerl2;
-use Alpaka::Request::ModPerl2;
-
-use Alpaka::Response::CGI;
-use Alpaka::Request::CGI;
-
 use Alpaka::Session::File;
-
 use Data::Dumper;
+
 our $DEBUG = 1;
 our $VERSION = '0.62';
 
+BEGIN {
+    my ( $software, $version ) = $ENV{MOD_PERL} =~ /^(\S+)\/(\d+(?:[\.\_]\d+)+)/;
+    
+    if ( $software eq 'mod_perl') {
+        if ( $version >= 1.999 ) {
+            require Alpaka::Response::ModPerl2;
+            require Alpaka::Request::ModPerl2;
+        }
+        elsif ( $version >= 1.13 ) {
+            require Alpaka::Response::ModPerl1;
+            require Alpaka::Request::ModPerl1;
+        }
+    }
+    else {
+        require Alpaka::Response::CGI;
+        require Alpaka::Request::CGI
+    }
+}
+
+#------------------------------
+# Handlers
+#------------------------------
 
 sub modperl2 : method {
     my($class, $r) = @_;
@@ -21,22 +37,24 @@ sub modperl2 : method {
     my $self = $class->instance;
     $self->request( Alpaka::Request::ModPerl2->new( $r ) );
     $self->response( Alpaka::Response::ModPerl2->new( $r ) );
-    
     (undef, $self->{path}) = split '/', $self->request->r->uri;
     $self->{path} = '/' . $self->{path}; 
-    
     $self->_handle;
  
-    return Apache::OK;
+    return Alpaka::Response::ModPerl2::OK();
 }
 
 sub modperl1 ($$) {
     my($class, $r) = @_;
     
     my $self = $class->instance;
-    #$self->request( Alpaka::Request::ModPerl1->new( $r ) );
-    #$self->response( Alpaka::Response::ModPerl1->new( $r ) );
+    $self->request( Alpaka::Request::ModPerl1->new( $r ) );
+    $self->response( Alpaka::Response::ModPerl1->new( $r ) );
+    (undef, $self->{path}) = split '/', $self->request->r->uri;
+    $self->{path} = '/' . $self->{path}; 
     $self->_handle;
+
+    return Alpaka::Response::ModPerl1::OK();
 }
 
 sub cgi {
@@ -49,17 +67,9 @@ sub cgi {
     $self->_handle;
 }
 
-sub _handle {
-    my($self, $type) = @_;
-    
-    $self->session( Alpaka::Session::File->new( $self ) );
-    $self->session->init( $self ) if $self->{session_support};
-
-    $self->execute( $self->request->compo, $self->request->action );
-    $self->session->save if $self->{session_support};
-    $self->response->send;
-}
-
+#------------------------------
+# Class Methods
+#------------------------------
 
 sub instance {
     my $class = shift;
@@ -89,6 +99,21 @@ sub _new_instance {
 	$self->_load_components;
     
 	return $self;
+}
+
+#------------------------------
+# Instance Methods
+#------------------------------
+
+sub _handle {
+    my($self, $type) = @_;
+    
+    $self->session( Alpaka::Session::File->new( $self ) );
+    $self->session->init( $self ) if $self->{session_support};
+
+    $self->execute( $self->request->compo, $self->request->action );
+    $self->session->save if $self->{session_support};
+    $self->response->send;
 }
 
 sub execute {
@@ -126,18 +151,8 @@ sub forward {
     $self->_execute($compo, $action, 'forward')
 }
 
-sub setup {
-	my $self = shift;
-    
-	$self->map( '_default'  =>  'Alpaka::Index' );
-}
-
 sub reload {
 	$_[0]->_load_components;
-}
-
-sub cleanup {
-	my $self = shift;
 }
 
 sub response {
@@ -168,42 +183,10 @@ sub session_support {
 	return $self->{session_support};
 }
 
-sub base_path {
-	my ($self, $value) = @_;
-	
-	$self->{base_path}=$value if defined $value;
-	return $self->{base_path};
-}
-
 sub path {
 	my ($self, $value) = @_;
-	
-	#$self->{path}=$value if defined $value;
+
 	return $self->{path};
-}
-sub app_name {
-	my ($self, $value) = @_;
-	
-	$self->{app_name}=$value if defined $value;
-	return $self->{app_name};
-}
-
-sub begin { 
-	my ($self, $request, $response, $session) = @_;
-	
-    return;
-}
-
-sub end { 
-	my ($self, $request, $response, $session) = @_;
-
-    return;
-}
-
-sub index {  #hmmm, sacar y poner default component? hmmm, psee...
-	my ($self, $request, $response, $session) = @_;
-	
-    return;
 }
 
 sub map {
@@ -236,6 +219,7 @@ sub _load_components {
         # alert if missing packages ?
     }
 }
+
 sub dump_objects {
     my $self = shift;
     
@@ -248,6 +232,32 @@ sub dump_objects {
     $self->response->write( '<pre>' );
     $self->response->write( $self->session->as_string );
     $self->response->write( '</pre>' );
+}
+
+#------------------------------
+# Override Instance Methods
+#------------------------------
+
+sub setup {
+	my $self = shift;
+    
+	$self->map( '_default'  =>  'Alpaka::Index' );
+}
+
+sub cleanup {
+	my $self = shift;
+}
+
+sub begin { 
+	my ($self, $request, $response, $session) = @_;
+	
+    return;
+}
+
+sub end { 
+	my ($self, $request, $response, $session) = @_;
+
+    return;
 }
 
 1;

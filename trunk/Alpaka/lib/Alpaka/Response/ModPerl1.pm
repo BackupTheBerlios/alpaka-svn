@@ -1,20 +1,17 @@
-package Alpaka::Response::ModPerl2;
+package Alpaka::Response::ModPerl1;
 
 use strict;
 use base 'Alpaka::Response::Base';
-use Apache2;
+
 use Apache::Request;
-use Apache::Connection;
-use Apache::RequestRec ( ); # for $r->content_type
-use Apache::RequestIO ( );  # for $r->print
-use Apache::Const qw( OK REDIRECT );
+use Apache::Constants qw( OK REDIRECT );
 
 # override methods;
 
 sub header {
 	my ($self, $key, $value) = @_;
 
-	$self->{r}->headers_out->set($key => $value)
+	$self->{r}->header_out->set($key => $value)
 	   if (defined $key && defined $value);
 }
 
@@ -38,9 +35,10 @@ sub send {
 	if ($self->{redirect}) {
         $self->{r}->headers_out->set(Location => $self->{redirect});
         $self->{r}->status( REDIRECT );
+        $self->{r}->send_http_header;
 	}
 	else {
-    	$self->{r}->content_type( $self->{content_type} );
+    	$self->{r}->send_http_header( $self->{content_type} );
     	$self->{r}->print( $self->{out} );
 	}
 }

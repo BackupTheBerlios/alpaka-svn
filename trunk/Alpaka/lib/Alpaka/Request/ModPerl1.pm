@@ -1,14 +1,12 @@
-package Alpaka::Request::ModPerl2;
+package Alpaka::Request::ModPerl1;
 
 use strict;
 use base 'Alpaka::Request::Base';
-use Apache2;
+
 use Apache::Request;
-use Apache::Connection;
-use Apache::RequestRec ( ); # for $r->content_type
-use Apache::RequestIO ( );  # for $r->print
-use Apache::Const qw( OK );
 use Apache::Cookie;
+use Apache::Constants qw( OK );
+use Apache::Connection;
 
 # override methods;
 
@@ -58,7 +56,7 @@ sub params {
 
 sub remote_host {
 
-	return $_[0]->{r}->connection->remote_host || $_[0]->{r}->connection->get_remote_host;
+	return $_[0]->{r}->connection->remote_host;
 }
 
 sub remote_address {
