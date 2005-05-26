@@ -31,7 +31,7 @@
 	PerlModule SampleApp
 	<Location /example>
 		SetHandler perl-script
-        	PerlResponseHandler SampleApp->modperl2
+        	PerlResponseHandler SampleApp->mp2_handler
 	</Location>
 	# End Alpaka aplication configuration
 </VirtualHost>

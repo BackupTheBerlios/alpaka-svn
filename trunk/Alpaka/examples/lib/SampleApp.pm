@@ -3,16 +3,17 @@ use strict;
   
 use base 'Alpaka::Application';
   
-  
-sub setup {
+sub init {
     my $self = shift;
 
-    $self->session_support(1); 
-    
+    $self->config( sessions => 1);
+        
 	$self->map( 
         '_default'  =>  'SampleApp::Index',    
         'example1'  =>  'SampleApp::Example1',
 	);
+	
+	$self->set('message' => 'Hello World! This message is global data!');
 }
 
 sub begin { 

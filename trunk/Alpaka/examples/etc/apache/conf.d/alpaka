@@ -26,7 +26,7 @@ PerlRequire /etc/apache/startup.pl
 	PerlModule SampleApp
 	<Location /example>
 		SetHandler perl-script
-        	PerlHandler SampleApp->modperl1
+        	PerlHandler SampleApp->mp1_handler
 	</Location>
 	# End Alpaka aplication configuration
 </VirtualHost>

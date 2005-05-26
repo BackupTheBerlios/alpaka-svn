@@ -13,6 +13,7 @@ sub index : action {
     $response->write('<h3><a href="example1/redirect.do">Redirect</a></h3>');
     $response->write('<h3><a href="example1/forwarding.do">Forward</a></h3>');
     $response->write('<h3><a href="example1/request.do">Request</a></h3>');
+    $response->write('<h3><a href="example1/global.do">Global</a></h3>');
     $response->write('<h3><a href="example1/dump.do?param1=1&param1=2&param2=a">Dump</a></h3>');
         
 }
@@ -71,6 +72,15 @@ sub request : action {
     $response->write('</ul>');
     $response->write('[<a href="../">back</a>]');
     
+}
+
+sub global : action {
+    my ($self, $request, $response, $session, $app) = @_;
+    
+    my $data = $app->get('message'); 
+    $response->write("<h1>$data</h1>");
+    $response->write('[<a href="../">back</a>]');
+  
 }
 
 sub dump : action {
