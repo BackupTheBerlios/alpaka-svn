@@ -31,7 +31,7 @@ BEGIN {
 # Handlers
 #------------------------------
 
-sub modperl2 : method {
+sub mp2_handler : method {
     my($class, $r) = @_;
     
     my $self = $class->instance;
@@ -44,7 +44,7 @@ sub modperl2 : method {
     return Alpaka::Response::ModPerl2::OK();
 }
 
-sub modperl1 ($$) {
+sub mp1_handler ($$) {
     my($class, $r) = @_;
     
     my $self = $class->instance;
@@ -57,7 +57,7 @@ sub modperl1 ($$) {
     return Alpaka::Response::ModPerl1::OK();
 }
 
-sub cgi {
+sub cgi_handler {
     my($class) = @_;
     
     my $self = $class->instance;
