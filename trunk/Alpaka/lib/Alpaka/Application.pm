@@ -96,7 +96,7 @@ sub _new_instance {
 	$self->{base_path} = '/';
 	
 	$self->setup();
-	$self->_load_components;
+	$self->_load_dispatchers;
     
 	return $self;
 }
@@ -111,48 +111,48 @@ sub _handle {
     $self->session( Alpaka::Session::File->new( $self ) );
     $self->session->init( $self ) if $self->{session_support};
 
-    $self->execute( $self->request->compo, $self->request->action );
+    $self->execute( $self->request->dispatcher, $self->request->action );
     $self->session->save if $self->{session_support};
     $self->response->send;
 }
 
 sub execute {
-	my ($self, $compo, $action) = @_;
+	my ($self, $dispatcher, $action) = @_;
 
     $self->begin($self->request, $self->response, $self->session, $self);
-    $self->_execute($compo, $action);
+    $self->_execute($dispatcher, $action);
     $self->end($self->request, $self->response, $self->session, $self);
     #$self->dump_objects() if $DEBUG;
 }
 
 sub _execute {
-	my ($self, $compo, $action, $dispatcher ) = @_;
+	my ($self, $dispatcher, $action, $type ) = @_;
 	
-	$dispatcher ||= 'execute';
-    my $component =  $self->{_map}->{$compo} || $compo;
-	if ($component) {
+	$type ||= 'execute';
+    my $dispatcher_class = $self->{_map}->{$dispatcher} || $dispatcher;
+	if ($dispatcher_class) {
     	eval {
-    	   $component->instance($self)->$dispatcher( $action );
+    	   $dispatcher_class->instance($self)->$type( $action );
     	};
     	if ($@) {
     	   #$self->response->clear(); # ?
-    	   $self->response->write("<h1>Error executing $compo -> $action</h1>");
+    	   $self->response->write("<h1>Error executing $dispatcher -> $action</h1>");
     	   $self->response->write("<pre>$@</pre>") if $DEBUG;
     	}
 	}
 	else {
-	   $self->response->write("<h1>Component Not Found</h1>");
+	   $self->response->write("<h1>Dispatcher Not Found</h1>");
 	}
 }
 	
 sub forward {
-	my ($self, $compo, $action) = @_;
+	my ($self, $dispatcher, $action) = @_;
 
-    $self->_execute($compo, $action, 'forward')
+    $self->_execute($dispatcher, $action, 'forward')
 }
 
 sub reload {
-	$_[0]->_load_components;
+	$_[0]->_load_dispatchers;
 }
 
 sub response {
@@ -210,7 +210,7 @@ sub map {
 	}
 }
 
-sub _load_components {
+sub _load_dispatchers {
     my $self = shift;
  
     # do not load if already loaded (how?)

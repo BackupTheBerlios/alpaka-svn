@@ -1,7 +1,7 @@
 package Alpaka::Index;
 use strict;
   
-use base 'Alpaka::Component';
+use base 'Alpaka::Dispatcher';
 
 
 sub index : action {

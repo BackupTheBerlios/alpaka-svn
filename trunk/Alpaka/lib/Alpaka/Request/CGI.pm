@@ -11,7 +11,7 @@ sub _initialize {
 
 
     $self->{r} = CGI->new();
-    ( $self->{component}, $self->{action} ) 
+    ( $self->{dispatcher}, $self->{action} ) 
         = $self->_parse_action( $self->{r}->path_info );
 
 	return $self;

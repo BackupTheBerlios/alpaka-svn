@@ -15,7 +15,7 @@ sub _initialize {
 
     $self->{r} = shift;
     $self->{req} = Apache::Request->new( $self->{r} );
-    ( $self->{component}, $self->{action} ) 
+    ( $self->{dispatcher}, $self->{action} ) 
         = $self->_parse_action( $self->{r}->path_info );
 
 	return $self;

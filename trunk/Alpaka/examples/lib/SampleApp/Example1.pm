@@ -1,12 +1,11 @@
 package SampleApp::Example1;
 use strict;
   
-use base 'Alpaka::Component';
+use base 'Alpaka::Dispatcher';
 our $_actions = {};
 
 sub index : action {
     my ($self, $request, $response, $session, $app) = @_;
-    $response->write("<h2>App Path : " . $app->path. "</h2>");
     
     $response->write("<h1>Sample Actions</h1>");
     $response->write('<h3><a href="example1/hello_world.do">Hello World</a></h3>');
@@ -22,7 +21,7 @@ sub hello_world : action {
     my ($self, $request, $response, $session, $app) = @_;
     
     $response->write("<h1>Hello World</h1>");
-    $response->write('<a href="../">back</a></h3>');
+    $response->write('[<a href="../">back</a>]');
   
 }
 
@@ -32,13 +31,13 @@ sub counter : action {
     $session->close if $request->get('reset');
     
     my $count = $session->get('count') || 0;
+    $count++;
     
     $response->write("<h1>Count: $count</h1>");
-    $response->write('<a href="counter.do">reload</a><br>');
-    $response->write('<a href="counter.do?reset=1">reset</a><br>');
-    $response->write('<a href="../">back</a></h3>');
+    $response->write('[<a href="counter.do">reload</a>]');
+    $response->write('[<a href="counter.do?reset=1">reset</a>]');
+    $response->write('[<a href="../">back</a>]');
     
-    $count++;
     $session->set('count' => $count);  
 }
 
@@ -70,14 +69,14 @@ sub request : action {
     $response->write('<li>Accept Encoding: ' . $request->accept_encoding);
     
     $response->write('</ul>');
-    $response->write('<a href="../">back</a></h3>');
+    $response->write('[<a href="../">back</a>]');
     
 }
 
 sub dump : action {
     my ($self, $request, $response, $session, $app) = @_;
    
-    $response->write("<h1>Requet :</h1>");
+    $response->write("<h1>Request :</h1>");
     $response->write('<pre>');
     $response->write( $request->as_string );
     $response->write('</pre>');
@@ -87,13 +86,13 @@ sub dump : action {
     $response->write( $session->as_string );
     $response->write('</pre>');
     
-    $response->write('<a href="../">back</a></h3>');
+    $response->write('[<a href="../">back</a>]');
 }
     
 sub begin { 
 	my ($self, $request, $response, $session, $app) = @_;
 	
-	$response->write("<table bgcolor=\"#aaaaee\" border=\"1\"><tr><td>");
+	$response->write("<br><br><table bgcolor=\"#aaaaee\" border=\"1\" width=\"70\%\"><tr><td>");
 	
 
 }
@@ -101,7 +100,7 @@ sub begin {
 sub end { 
 	my ($self, $request, $response, $session, $app) = @_;
 	
-	$response->write("</td></tr></table>");
+	$response->write("</td></tr></table><br>");
 }
 
 

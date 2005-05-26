@@ -21,26 +21,22 @@ sub _parse_action {
 	my ( $self, $path ) = @_;
 
     $path =~ m/^\/(.+)\/(.+)\.do$/;
-    my $compo = $1 || $path;
+    my $dispatcher = $1 || $path;
     my $action = $2 || 'index';
-    $compo = '' if $compo =~ m/\.do$/;
-    $compo =~ s/^\///;
-    $compo =~ s/\/$//;
-    $compo = $compo || '_default';
+    $dispatcher = '' if $dispatcher =~ m/\.do$/;
+    $dispatcher =~ s/^\///;
+    $dispatcher =~ s/\/$//;
+    $dispatcher = $dispatcher || '_default';
 
-    return ($compo, $action);
+    return ($dispatcher, $action);
 }
 
 sub _initialize {
 	return;
 }
 
-sub component {
-	return $_[0]->{component};
-}
-
-sub compo {
-	return $_[0]->{component};
+sub dispatcher {
+	return $_[0]->{dispatcher};
 }
 
 sub action {

@@ -1,4 +1,4 @@
-package Alpaka::Component;
+package Alpaka::Dispatcher;
 
 use strict; 
 use Data::Dumper;
