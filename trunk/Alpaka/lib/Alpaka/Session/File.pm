@@ -1,14 +1,14 @@
 package Alpaka::Session::File;
 
 use strict;
-use Storable;
 use base 'Alpaka::Session::Base';
+use Storable qw( lock_store lock_retrieve );
 
 sub load {
 	my ($self) = @_;
 
 	my $data;
-	eval {$data = retrieve("/tmp/$self->{id}.apksess")};
+	eval {$data = lock_retrieve("/tmp/$self->{id}.apksess")};
     $self->data($data);
 } 
 
@@ -17,7 +17,7 @@ sub save {
 
     return unless $self->{modified};
 	my $data = $self->data;
-	eval {store $data, "/tmp/$self->{id}.apksess"};
+	eval {lock_store $data, "/tmp/$self->{id}.apksess"};
 }
 
 1;
