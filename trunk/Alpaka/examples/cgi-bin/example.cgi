@@ -4,5 +4,5 @@ use lib '../lib';
 use lib '../../lib';
 use SampleApp;
 
-SampleApp->cgi();
+SampleApp->cgi_handler();
 
