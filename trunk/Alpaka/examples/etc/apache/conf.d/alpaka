@@ -1,0 +1,32 @@
+PerlRequire /etc/apache/startup.pl
+
+<VirtualHost alpaka:80>
+	ServerAdmin webmaster@localhost
+	
+	DocumentRoot /var/www/alpaka
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	
+	<Directory /var/www/alpaka>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache/alpaka-error.log
+	LogLevel debug
+
+	CustomLog /var/log/apache/alpaka-access.log combined
+	ServerSignature On
+	
+	# Begin Alpaka aplication configuration
+	PerlModule SampleApp
+	<Location /example>
+		SetHandler perl-script
+        	PerlHandler SampleApp->modperl1
+	</Location>
+	# End Alpaka aplication configuration
+</VirtualHost>

@@ -1,0 +1,37 @@
+<VirtualHost alpaka:80>
+	ServerAdmin webmaster@localhost
+	
+	DocumentRoot /var/www/alpaka
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/alpaka>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /var/www/alpaka/cgi-bin/
+	<Directory "/var/www/alpaka/cgi-bin">
+		AllowOverride None
+		Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache2/alpaka-error.log
+	LogLevel debug
+
+	CustomLog /var/log/apache2/alpaka-access.log combined
+	ServerSignature On
+	
+	# Begin Alpaka aplication configuration
+	PerlModule SampleApp
+	<Location /example>
+		SetHandler perl-script
+        	PerlResponseHandler SampleApp->modperl2
+	</Location>
+	# End Alpaka aplication configuration
+</VirtualHost>
