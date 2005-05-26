@@ -5,6 +5,10 @@ use strict;
 use Digest::MD5 qw(md5_hex);
 use Data::Dumper;
 
+#------------------------------
+# Class Methods
+#------------------------------
+
 sub new {
 	my $class = shift;
 	my $self = {};
@@ -19,6 +23,9 @@ sub new {
 	return $self;
 }
 
+#------------------------------
+# Instance Methods
+#------------------------------
 
 sub init {
     my ($self, $app) = @_;
@@ -52,7 +59,6 @@ sub id {
 	return $self->{id};
 }
 
-
 sub data {
 	my ($self, $data) = @_;
 	
@@ -80,18 +86,10 @@ sub close() {
     $self->{id} = undef;
 }
 
-
-sub is_new() {
-	my ($self) = @_;
-	return $self->{_new};
-}
-
-
 sub get {
 	my ($self, $key) = @_;
 	return $self->{data}->{$key};
 }
-
 
 sub set {
 	my ($self, $key, $value) = @_;
@@ -103,6 +101,15 @@ sub set {
 	return $self->{data}->{$key};
 }
 
+sub as_string {
+	my ($self) = @_;
+    
+    return Dumper($self->data)
+}
+
+#------------------------------
+# Override Instance Methods
+#------------------------------
 
 sub load {
 	my ($self) = @_;
@@ -110,17 +117,12 @@ sub load {
 	return;
 } 
 
-
 sub save {
 	my ($self) = @_;
 
     return;
 }
 
-sub as_string {
-	my ($self) = @_;
-    
-    return Dumper($self->data)
-}
+
 
 1;

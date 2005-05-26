@@ -92,10 +92,10 @@ sub _new_instance {
 	bless($self, $class);
 
 	#defaults
-	$self->{session_support} = 1;
-	$self->{base_path} = '/';
-	
-	$self->setup();
+	$self->{config}->{sessions} = 1;
+	$self->{data} = {};
+	$self->{plugins} = {};
+	$self->init();
 	$self->_load_dispatchers;
     
 	return $self;
@@ -109,10 +109,10 @@ sub _handle {
     my($self, $type) = @_;
     
     $self->session( Alpaka::Session::File->new( $self ) );
-    $self->session->init( $self ) if $self->{session_support};
+    $self->session->init( $self ) if $self->{config}->{sessions};
 
     $self->execute( $self->request->dispatcher, $self->request->action );
-    $self->session->save if $self->{session_support};
+    $self->session->save if $self->{config}->{sessions};
     $self->response->send;
 }
 
@@ -234,11 +234,57 @@ sub dump_objects {
     $self->response->write( '</pre>' );
 }
 
+sub config {
+	my $self = shift;
+
+	# First use?  Create new _map
+	$self->{config} = {} unless (exists($self->{config}));
+	my $rr_m = $self->{config};
+	# If data is provided, set it!
+	if (scalar(@_)) {
+		# Is it a hash, or hash-ref?
+		if (ref($_[0]) eq 'HASH') {
+			# Make a copy, which augments the existing contents (if any)
+			%$rr_m = (%$rr_m, %{$_[0]});
+		} elsif ((scalar(@_) % 2) == 0) {
+			# It appears to be a possible hash (even # of elements)
+			%$rr_m = (%$rr_m, @_); # ok
+		} else {
+			croak("Odd number of elements passed to config().  Not a valid hash");
+		}
+	}
+	return $self->{config};
+}
+
+sub get {
+	my ($self, $key) = @_;
+	return $self->{data}->{$key};
+}
+
+
+sub set {
+	my ($self, $key, $value) = @_;
+	
+	if ( defined $value ) {
+	   $self->{data}->{$key} = $value;
+	   $self->{modified} = 1;
+    };
+	return $self->{data}->{$key};
+}
+
+sub data {
+	return $_[0]->{data};
+}
+
+sub plugins {
+	return $_[0]->{plugins};
+}
+
 #------------------------------
 # Override Instance Methods
 #------------------------------
 
-sub setup {
+sub init {
 	my $self = shift;
     
 	$self->map( '_default'  =>  'Alpaka::Index' );
