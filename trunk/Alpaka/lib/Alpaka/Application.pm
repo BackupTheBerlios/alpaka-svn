@@ -114,6 +114,8 @@ sub _handle {
     $self->execute( $self->request->dispatcher, $self->request->action );
     $self->session->save if $self->{config}->{sessions};
     $self->response->send;
+    
+    $self->cleanup;
 }
 
 sub execute {
@@ -276,8 +278,11 @@ sub data {
 	return $_[0]->{data};
 }
 
-sub plugins {
-	return $_[0]->{plugins};
+sub slot {
+    my ($self, $key) = @_;
+    
+    $self->{plugins}->{$key} = {} unless ( exists $self->{plugins}->{$key} );
+	return $self->{plugins}->{$key};
 }
 
 #------------------------------

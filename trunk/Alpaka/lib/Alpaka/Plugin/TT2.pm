@@ -26,15 +26,14 @@ sub config_tt2 {
 		}
 	}
 	
-    $self->{plugins}->{tt2} = {} unless ( exists( $self->{plugins}->{tt2} ) );
-    my $tt2_slot = $self->{plugins}->{tt2};
+    my $tt2_slot = $self->slot('tt2');
     $tt2_slot->{config} = $config;
 }
 
 sub tt2 {
     my $self = shift;
     
-    my $tt2_slot = $self->{plugins}->{tt2};
+    my $tt2_slot = $self->slot('tt2');
     my $config = $tt2_slot->{config};
     $tt2_slot->{engine} = Template->new( $config ) unless $tt2_slot->{engine};
     return $tt2_slot->{engine} ;

@@ -2,12 +2,16 @@ package SampleApp;
 use strict;
   
 use base 'Alpaka::Application';
+#use Alpaka::Plugin::TT2;
+#use Alpaka::Plugin::DBI;
   
 sub init {
     my $self = shift;
 
     $self->config( sessions => 1);
-        
+    # $self->config_tt2(  INCLUDE_PATH => '/var/www/alpaka/templates' );
+    # $self->db_connect( 'DBI:mysql:mysql:localhost', 'root', undef );
+    
 	$self->map( 
         '_default'  =>  'SampleApp::Index',    
         'example1'  =>  'SampleApp::Example1',
@@ -38,4 +42,11 @@ sub end {
     $response->write("</body>");
     $response->write("</html>");
 }
+
+# sub cleanup {
+#    my $self = shift;
+#
+#    $self->db_disconnect;
+# }
+
 1;

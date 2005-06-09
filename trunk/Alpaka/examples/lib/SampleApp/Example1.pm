@@ -98,7 +98,24 @@ sub dump : action {
     
     $response->write('[<a href="../">back</a>]');
 }
-    
+
+# sub tt2 : action {
+#    my ($self, $request, $response, $session, $app) = @_;
+#    
+#    $app->process('test.tmpl', {message => 'Hello World!!!'});  
+# }
+
+# sub db : action {
+#    my ($self, $request, $response, $session, $app) = @_;
+#    
+#    my $dbs = $app->dbh->selectall_arrayref("SELECT Db from db");
+#    $response->write('<ul>');
+#    foreach my $db (@$dbs) {
+#        $response->write("<li> $db->[0]");
+#    }
+#    $response->write('</ul>');
+# }
+
 sub begin { 
 	my ($self, $request, $response, $session, $app) = @_;
 	

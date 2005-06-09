@@ -1,82 +1,82 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-	<title>Alpaka</title>
-	<style>
+  <title>Alpaka</title>
+  <style>
 	</style>
 </head>
 <body>
-<p><img src="alpaka-logo.gif" name="logo" align="bottom" width="324" height="86" border="0">
-</p>
+<p><img src="alpaka-logo.gif" name="logo" align="bottom" border="0"
+ height="86" width="324"></p>
+<h2>Introduction
+</h2>
 <p class="para">Alpaka is a MVC
 (Model/View/Controller) framework for building web applications. It's
 on very alfa stage. You shouldn't use this module on production
-environments (probably, you can't, anyway). This, is a &quot;quick &amp;
-dirty&quot; (very quick and very dirty) introduction. 
-</p>
-<p class="para">Alpaka is yet another MVC framework for web applications. 
-It pretends to be flexible, agile, and Perlish. So, with Alpaka &quot;There's more than one
-way to do it&quot; and &quot;Easy things should be easy and difficult
-things should be possible&quot;. 
-</p>
+environments (probably, you can't, anyway). This, is a "quick &amp;
+dirty" (very quick and very dirty) introduction. </p>
+<p class="para">Alpaka is yet another MVC framework for web
+applications. It's made to be flexible, agile, non intrusive, and of
+course, perlish. So, with Alpaka "There's more than one
+way to do it" and "Easy things should be easy and difficult
+things should be possible". </p>
 <p class="para">Actually, Alpaka is the
-&quot;Controller&quot; part of MVC, you can use several &quot;Views&quot;
+"Controller" part of MVC, you can use several "Views"
 like Template Toolkit or HTML::Template, and you are neither
-restricted in the &quot;Model&quot; part. You can use plain old perl
-objects,  something like Class::DBI, etc. 
-</p>
+restricted in the "Model" part. You can use plain old perl
+objects, something like Class::DBI, etc.</p>
+<p class="para">Alpaka comes with a very simple plug-in system, so, new
+functionality can be added to the framework to maintain&nbsp; the core
+small and compact. </p>
 <p class="para">Alpaka structures the control of
-a web application in &quot;Applications&quot;, &quot;Components&quot;
-and &quot;Actions&quot;. An Application has Components, and
-Components has Actions. The URLs are in the form of
-http://host/application/dispatcher/action.do or http://host/dispatcher/action.do
+a web application in "Applications", "Dispatchers"
+and "Actions". An Application has Dispatchers, and Dispatchers has
+Actions. The URLs are in the form of
+http://host/application/dispatcher/action.do or
+http://host/dispatcher/action.do
 </p>
 <p class="para">If you are looking for a more
-stable MVC framework based on perl, check out <a href="http://maypole.simon-cozens.org/">Maypole</a>
-from Simon Cozens.</p>
+stable MVC framework based on perl, check out <a
+ href="http://maypole.simon-cozens.org/">Maypole</a>
+from Simon Cozens, or Catalyst.</p>
+<h2>Download</h2>
 <p class="para">You can download the Alpaka
 distribution from <a href="Alpaka-0.61.tar.gz">here</a>.
-
 </p>
 <p>Note that this module isn't in
 the <a href="http://cpan.org/">CPAN</a> yet. It will be uploaded to
 the <a href="http://cpan.org/">CPAN</a> when reaches a more stable
-level. 
-</p>
+level. </p>
+<h2>Install</h2>
 <p>To install, unpack the
-distribution &quot;a la perl&quot;: 
-</p>
-<pre>perl Makefile.PL
-make
-make install</pre>
+distribution "a la perl": </p>
+<pre>perl Makefile.PL<br>make<br>make install</pre>
 <p>
 Alpaka supports any mod_perl 1 and 2, and any CGI capable
-web server. 
-</p>
-<p>No more documentation, for the
-moment. Sorry. 
-</p>
+web server. </p>
+<p>You can read a small <a href="user_guide.html">user guide</a>, but
+that's all the documentation, so far. Sorry.</p>
+<h2>Development </h2>
 <p>This project is hosted by
-
 <a href="http://developer.berlios.de/">BerliOS</a>, visit the
 <a href="http://developer.berlios.de/projects/alpaka/">project's
 page</a>.</p>
 <p>If you are interested in this
-module please join the mailing list: 
-</p>
+module please join the mailing list: </p>
 <ul>
-	<LI><p><a href="http://lists.berlios.de/mailman/listinfo/alpaka-devel">alpaka-devel@lists.berlios.de
-	</a>
-	</p>
+  <li>
+    <p><a href="http://lists.berlios.de/mailman/listinfo/alpaka-devel">alpaka-devel@lists.berlios.de
+    </a> </p>
+  </li>
 </ul>
-<p style="font-style: normal; font-weight: medium">For
-anonymous svn checkout: 
-
-</p>
-<pre STYLE="margin-bottom: 0.5cm">svn checkout svn://svn.berlios.de/alpaka</pre><p>
-<br><a href="http://developer.berlios.de/"><img src="bslogo.gif" name="berlios" alt="BerliOS Developer Logo" align="bottom" width="124" height="32" border="0"></a>
+<p style="font-style: normal;">For
+anonymous svn checkout: </p>
+<pre style="margin-bottom: 0.5cm;">svn checkout svn://svn.berlios.de/alpaka</pre>
+<p><br>
+<a href="http://developer.berlios.de/"><img src="bslogo.gif"
+ name="berlios" alt="BerliOS Developer Logo" align="bottom" border="0"
+ height="32" width="124"></a></p>
 <p align="center">&copy; Pablo Daniel
-Cano &lt;canpaniel at cpan dot org&gt; 
-</p>
+Cano &lt;canpaniel at cpan dot org&gt; </p>
 </body>
 </html>

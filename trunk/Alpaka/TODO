@@ -3,31 +3,25 @@ Alpaka TODO
 22/05/2005 
 
 * Fix dispatcher/action mapping
+options:
 http://test.com/app/dispatcher.action
 http://test.com/app/dispatcher.action.do
 
-http://test.com/app/dispatcher/action.do 			app:app		dis:dispatcher		action:action
+http://test.com/app/dispatcher/action.do 			app:app		dis:dispatcher			action:action
 http://test.com/app/dispatcher/nent/action.do		app:app		dis:dispatcher/nent		action:action
-http://test.com/dispatcher/action.do					app:		dis:dispatcher		action:action
+http://test.com/dispatcher/action.do				app:		dis:dispatcher			action:action
 http://test.com/cgi-bin/alpaka.cgi/app/dispatcher/action.do	app:app		dis:dispatcher		action:action
-http://test.com/cgi-bin/alpaka.cgi/dispatcher/action.do	app:		dis:dispatcher		action:action
+http://test.com/cgi-bin/alpaka.cgi/dispatcher/action.do		app:		dis:dispatcher		action:action
 
-* Implement application data set/get (4)
-$app->get( $key );	
-$app->set( $key => $value );
+* Common base class for ModPerl1 & ModPerl2 (6)
 
-* Join ModPerl1 & ModPerl2 -> ModPerl
-  Put in ModPerl1 & ModPerl2 only ModPerl1 & ModPerl2 specifics (6)
+* oveload "" (as_string) and bool operators (4)
 
-* Change Component a Dispatcher? o Controller?   (5) Dispatcher
+* Apache 1 & 2 configuration examples  (1)
+* Documentation!		(2)
 
-* oveload "" (as_string) and bool operators
+* Session as tied hash (ref) ?
 
-* To singleton or not to singleton?
-
-* Apache 1 & 2 configuration examples
-* Documentation!
-
-* Session as tied hash (ref)
-
-* locking in session files
+* Alternative DB based session store
+	
+	

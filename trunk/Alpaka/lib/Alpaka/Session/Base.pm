@@ -19,6 +19,7 @@ sub new {
 	$self->{response} = $self->{app}->response;
 	$self->{modified} = 0;
 	$self->{data} = {};
+	$self->{new} = 0;
 
 	return $self;
 }
@@ -35,9 +36,11 @@ sub init {
     
     if ($self->{id}) {
         $self->load();
+        $self->{new} = 0;
     }
     else {
-        $self->{id} = $self->_generate_id;   
+        $self->{id} = $self->_generate_id;
+        $self->{new} = 1;
         $self->{response}->set_cookie( 
             {
                 name    => 'SESSION',

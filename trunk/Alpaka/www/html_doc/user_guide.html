@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <title>Alpaka</title>
+  <meta name="GENERATOR" content="OpenOffice.org 1.1.3  (Linux)">
+  <meta name="CREATED" content="20050602;18375800">
+  <meta name="CHANGED" content="20050602;20481600">
+</head>
+<body dir="ltr" lang="en-US">
+<p><img src="alpaka-logo.gif" name="logo" align="bottom" border="0"
+ height="86" width="324"></p>
+<h2>Introduction </h2>
+<p>This is a first attempt to write a small guide to the Alpaka
+framework.&nbsp;</p>
+<p>Alpaka is basically a tool to help in the development of MVC web
+applications. Is a lightweight framework, and one of their objectives
+is not to be bloated. With Alpaka you can organize your work in
+Applications, Dispatchers and Actions. Actions are simply
+methods, Dispachers are classes groupping&nbsp;actions, and
+Applications are classes groupping Dispatchers. The URL's are mapped to
+this
+hierarchy, so, a common URL will looks like:</p>
+<pre style="margin-bottom: 0.2in;">http://host/app/dispacher/action.do</pre>
+<p>But, to maintain the url schema flexible, the dispatcher can use
+more
+than one path element, i.e.:</p>
+<pre style="margin-bottom: 0.2in;">http://host/app/dis/patcher/action.do</pre>
+<p>And the application can be mapped to /, if you only have one
+application per host, i.e.:</p>
+<pre style="margin-bottom: 0.2in;">http://host/dispatcher/action.do</pre>
+<p>A more clear example:</p>
+<pre style="margin-bottom: 0.2in;">http://www.mywebsite.com/user/edit.do</pre>
+<p>Here, you are executing the 'edit' action from the dispatcher
+associated with the 'user' path
+from the application associated to '/'. You will see more on how urls
+are mapped to
+their correspondent dispatcher, later.</p>
+<h2>Configuring </h2>
+<p>To configure an alpaka application to run under mod_perl you have
+to add the following to the Apache configuration:</p>
+<pre>PerlModule MySite<br>&lt;Location /&gt;<br>    SetHandler perl-script<br>    PerlResponseHandler MySite-&gt;mp2_handler<br>&lt;/Location&gt; <br><br></pre>
+<p>In case you're using mod_perl1 you should use the mp1_handler. (You
+can also run an alpaka application under CGI, using the cgi_handler).</p>
+<p>All the clases created should be accesible by mod_perl, so you
+should put the directory where you put your classes in the include
+path. There is more than one way to do it. I.E. you can add to the
+startup.pl script:</p>
+<pre>use lib qw( /path/to/your/lib );</pre>
+<h2>The Application Class</h2>
+<p>As you can see, the application is represented by the MySite
+module (class), so, to begin the development, we first need to create
+an Application Class called MySite (in this example). Inside the
+application, dispatcher are configured, and they will be the
+responsible of executing the actions requested in the url.</p>
+<p>Basically an Application Class looks like following:</p>
+<pre>package MySite;<br>use strict;<br> <br>use base 'Alpaka::Application';<br> <br>sub init {<br>    my $self = shift;<br> <br>    $self-&gt;map( <br>       '_default'  =&gt; 'MySite::Index', <br>       'news'      =&gt; 'MySite::News',<br>    );<br>}<br><br>1;</pre>
+<p>This is the minimal you need to create a new application (and most
+of
+the time, that's all you need). What you are doing here, is to
+override the init method inherited from Alpaka::Application to set up
+the
+mapping between urls and
+dispatchers classes. We choose this explicit way over an automatic
+mapping, to
+gain flexibility, and control at expenses of doing a little more of
+work.</p>
+<h2>The Dispatchers</h2>
+<p>Supposed you're mapping the application to /, the url:</p>
+<pre style="margin-bottom: 0.2in;">http://host/news/action.do</pre>
+<p>is handled by the Dispatcher Class MySite::News. In the same way,
+the url:</p>
+<pre style="margin-bottom: 0.2in;">http://host</pre>
+<p>is handled by the MySite::Index class, because it is the default
+dispatcher (when no other dispatcher is specified).</p>
+<p>To follow the development of our application, we need to create
+the dispatchers. A Dispatcher class looks like follows:</p>
+<pre>package MySite::News;<br>use strict;<br>  <br>use base 'Alpaka::Dispatcher';<br><br>sub show : action {<br>    my ($self, $request, $response, $session, $app) = @_;<br>   <br>    $response-&gt;write('&lt;h1&gt;Hello World, this is my first news.&lt;/h1&gt;');<br>    <br>}<br><br>1;</pre>
+<h2>The Actions</h2>
+<p>The actions are simply methods inside a dispatcher class. We call
+them 'action&nbsp;methods'. This Dispatcher class contains one action
+(the show method) which is marked as action using a subroutine
+attribute. Inside dispatcher classes, only methods with the action
+attribute are actually actions, and can be called from url requests,
+so is safe to add any other methods to &nbsp;the class because
+only&nbsp;can be executed from outside if you explicitly declare as
+actions.</p>
+<p>So we can now request the folowing URL:</p>
+<pre style="margin-bottom: 0.2in;">http://host/news/show.do</pre>
+<p>and the hello world message will appear in your browser.</p>
+<p>A dispatcher class can contain any number of actions, is you
+responsibility to group actions in Dispatcher classes to match you
+business logic, and keep the application maintainable an manageable.</p>
+<h2>The Request and Response Objects</h2>
+<p>In every action, the current dispatcher ($self), the request
+object (from where you can get GET/POST parameters), the response
+object (to which you can write to), the session object (where you can
+set/get session data), and the application object, are passed as
+parameters (always, in that order).</p>
+<p>As you can see you can write to the $response object to generate
+your output. But, in a "real world" application you won't
+be calling $response-&gt;write to generate the output, you may be
+using a template system. Alpaka makes no assumption of which template
+system do you prefer. You can use your template system of choice in the
+same way you use it in any other mod_perl o cgi application. (Did I
+mention you don't have to worry if the application runs under modperl
+or cgi?). &nbsp;If available, you can use a template system plugin,
+like the Alpaka::Plugin::TT2 plugin for Template::Toolkit 2</p>
+<p>Most of the time you may&nbsp;only need the first 3, so you can
+just write:</p>
+<pre style="margin-bottom: 0.2in;">my ($self, $request, $response) = @_</pre>
+<p>And of course you can choose the name of the parameters, i.e.:</p>
+<pre style="margin-bottom: 0.2in;">my ($self, $req, $resp) = @_</pre>
+<p>As example, we can introduce a GET parameter: </p>
+<pre style="margin-bottom: 0.2in;">http://host/news/show.do?name=Jhon</pre>
+<p>And the action method would looks like:</p>
+<pre>sub show : action {<br>    my ($self, $request, $response, $session, $app) = @_;<br>   <br>    my $name = $request-&gt;get('name');<br>    $response-&gt;write("&lt;h1&gt;Hello $name, this is my first news.&lt;/h1&gt;");<br>    <br>}</pre>
+<p>To start with Alpaka, this are the most important things you need to
+know. Now you can read the Application, Dispatcher, Request, Response
+and Session docs, to see how to get GET/POST parameters, do redirects
+and forwards (between actions), and store data in the session.&nbsp; </p>
+<p><a href="http://developer.berlios.de/"><img src="bslogo.gif"
+ name="berlios" alt="BerliOS Developer Logo" align="bottom" border="0"
+ height="32" width="124"></a></p>
+<p align="center">&copy; Pablo Daniel Cano &lt;canpaniel at cpan dot
+org&gt; </p>
+</body>
+</html>
