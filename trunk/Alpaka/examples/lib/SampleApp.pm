@@ -8,7 +8,7 @@ use base 'Alpaka::Application';
 sub init {
     my $self = shift;
 
-    $self->config( sessions => 1);
+    $self->config( sessions => 1 );
     # $self->config_tt2(  INCLUDE_PATH => '/var/www/alpaka/templates' );
     # $self->db_connect( 'DBI:mysql:mysql:localhost', 'root', undef );
     
