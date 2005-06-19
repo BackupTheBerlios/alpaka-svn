@@ -1,7 +1,7 @@
 package Alpaka::Response::CGI;
 
 use strict;
-use base 'Alpaka::Response::Base';
+use base 'Alpaka::Response';
 use CGI;
 
 # override methods;

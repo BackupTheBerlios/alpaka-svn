@@ -1,7 +1,7 @@
 package Alpaka::Request::ModPerl1;
 
 use strict;
-use base 'Alpaka::Request::Base';
+use base 'Alpaka::Request';
 
 use Apache::Request;
 use Apache::Cookie;

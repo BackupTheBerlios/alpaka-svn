@@ -1,4 +1,4 @@
-package Alpaka::Session::Base;
+package Alpaka::Session;
 
 use strict;
 

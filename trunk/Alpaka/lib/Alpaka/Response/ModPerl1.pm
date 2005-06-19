@@ -1,7 +1,7 @@
 package Alpaka::Response::ModPerl1;
 
 use strict;
-use base 'Alpaka::Response::Base';
+use base 'Alpaka::Response';
 
 use Apache::Request;
 use Apache::Constants qw( OK REDIRECT );

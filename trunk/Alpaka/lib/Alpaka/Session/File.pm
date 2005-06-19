@@ -1,7 +1,7 @@
 package Alpaka::Session::File;
 
 use strict;
-use base 'Alpaka::Session::Base';
+use base 'Alpaka::Session';
 use Storable qw( lock_store lock_retrieve );
 
 sub load {

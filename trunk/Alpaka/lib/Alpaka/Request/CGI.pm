@@ -1,7 +1,7 @@
 package Alpaka::Request::CGI;
 
 use strict;
-use base 'Alpaka::Request::Base';
+use base 'Alpaka::Request';
 use CGI qw( :cgi );
 use CGI::Cookie;
 # override methods;

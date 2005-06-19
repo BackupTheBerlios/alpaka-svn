@@ -1,7 +1,7 @@
 package Alpaka::Response::ModPerl2;
 
 use strict;
-use base 'Alpaka::Response::Base';
+use base 'Alpaka::Response';
 use Apache2;
 use Apache::Request;
 use Apache::Connection;

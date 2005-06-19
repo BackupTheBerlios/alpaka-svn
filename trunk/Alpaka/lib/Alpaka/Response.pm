@@ -1,4 +1,4 @@
-package Alpaka::Response::Base;
+package Alpaka::Response;
 
 use strict;
 

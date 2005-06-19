@@ -1,4 +1,4 @@
-package Alpaka::Request::Base;
+package Alpaka::Request;
 
 use strict;
 use Data::Dumper;
