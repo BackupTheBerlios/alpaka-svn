@@ -5,6 +5,24 @@ use strict;
 use Digest::MD5 qw(md5_hex);
 use Data::Dumper;
 
+=head1 NAME
+
+Alpaka::Session
+
+=head1 SYNOPSIS
+
+    The Session class
+    
+    my $param = $session->get( 'param' );
+    $session->set( 'param' => { 'Hello' => 'World' } );
+
+    
+=cut
+
+=head1 DESCRIPTION
+    
+=cut
+
 #------------------------------
 # Class Methods
 #------------------------------
@@ -57,10 +75,20 @@ sub _generate_id {
 	return substr(md5_hex(time() . md5_hex(time(). {}. rand(). $$)), 0, 16);
 }
 
+=over 4
+
+=item id
+
+=cut
+
 sub id {
 	my ($self) = @_;
 	return $self->{id};
 }
+
+=item data
+
+=cut
 
 sub data {
 	my ($self, $data) = @_;
@@ -70,6 +98,10 @@ sub data {
 	}
 	return $self->{data};
 }
+
+=item close
+
+=cut
 
 sub close() {
 	my ($self) = @_;
@@ -89,10 +121,18 @@ sub close() {
     $self->{id} = undef;
 }
 
+=item get
+
+=cut
+
 sub get {
 	my ($self, $key) = @_;
 	return $self->{data}->{$key};
 }
+
+=item set
+
+=cut
 
 sub set {
 	my ($self, $key, $value) = @_;
@@ -103,6 +143,10 @@ sub set {
     };
 	return $self->{data}->{$key};
 }
+
+=item as_string
+
+=cut
 
 sub as_string {
 	my ($self) = @_;
