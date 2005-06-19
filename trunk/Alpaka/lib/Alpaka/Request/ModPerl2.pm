@@ -107,7 +107,8 @@ sub accept_encoding {
 sub get_cookie {
 	my ($self, $key) = @_;
 	
-    my $cookie = Apache::Cookie->fetch->{$key};
+    my $ac = Apache::Cookie->fetch;
+    my $cookie = $ac->{$key} if $ac;
     if ($cookie) {
         return {
             name    => $key,
