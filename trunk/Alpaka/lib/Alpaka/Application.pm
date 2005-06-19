@@ -8,6 +8,32 @@ use Data::Dumper;
 our $DEBUG = 1;
 our $VERSION = '0.62';
 
+=head1 NAME
+
+Alpaka::Application
+
+=head1 SYNOPSIS
+
+    Application base class
+    
+    package SampleApp;
+    use base 'Alpaka::Application';
+
+    sub init {
+        my $self = shift;
+        
+    	$self->map( 
+            '_default'  =>  'SampleApp::Index',    
+            'example1'  =>  'SampleApp::Example1',
+    	);
+    }
+    
+=cut
+
+=head1 DESCRIPTION
+    
+=cut
+
 BEGIN {
     my ( $software, $version ) = $ENV{MOD_PERL} =~ /^(\S+)\/(\d+(?:[\.\_]\d+)+)/;
     
@@ -31,6 +57,14 @@ BEGIN {
 # Handlers
 #------------------------------
 
+=over 4
+
+=item mp2_handler
+
+    Handler to run the application under the ModPerl2 environment.
+
+=cut
+
 sub mp2_handler : method {
     my($class, $r) = @_;
     
@@ -43,6 +77,13 @@ sub mp2_handler : method {
  
     return Alpaka::Response::ModPerl2::OK();
 }
+
+=item mp1_handler
+
+    Handler to run the application under the ModPerl1 environment.
+
+=cut
+
 
 sub mp1_handler ($$) {
     my($class, $r) = @_;
@@ -57,6 +98,12 @@ sub mp1_handler ($$) {
     return Alpaka::Response::ModPerl1::OK();
 }
 
+=item cgi_handler
+
+    Handler to run the application under the CGI environment.
+
+=cut
+
 sub cgi_handler {
     my($class) = @_;
     
@@ -70,6 +117,14 @@ sub cgi_handler {
 #------------------------------
 # Class Methods
 #------------------------------
+
+=item instance
+
+    An Application is a Sinlgeton class, you can get an instance of
+    the application anytime with this method. Should be rarely used
+    because the application object is always passed to every action.
+
+=cut
 
 sub instance {
     my $class = shift;
@@ -146,7 +201,14 @@ sub _execute {
 	   $self->response->write("<h1>Dispatcher Not Found</h1>");
 	}
 }
-	
+
+=item forward
+
+    $self->forward($dispacher, $action);
+    Forward the application control to other action.
+
+=cut
+
 sub forward {
 	my ($self, $dispatcher, $action) = @_;
 
@@ -157,12 +219,30 @@ sub reload {
 	$_[0]->_load_dispatchers;
 }
 
+=item response
+
+    $self->response;
+    $self->response($response);
+    
+    Get/set the response object.
+
+=cut
+
 sub response {
 	my ($self, $response) = @_;
 	
 	$self->{response} = $response if defined $response;
 	return $self->{response};
 }
+
+=item request
+
+    $self->request;
+    $self->request($request);
+    
+    Get/set the request object.
+
+=cut
 
 sub request {
 	my ($self, $request) = @_;
@@ -171,6 +251,15 @@ sub request {
 	return $self->{request};
 }
 
+=item session
+
+    $self->session;
+    $self->session($session);
+    
+    Get/set the session object.
+
+=cut
+
 sub session {
 	my ($self, $session) = @_;
 	
@@ -178,18 +267,30 @@ sub session {
 	return $self->{session};
 }
 
-sub session_support {
-	my ($self, $value) = @_;
-	
-	$self->{session_support}=$value if defined $value;
-	return $self->{session_support};
-}
+=item path
+
+    $app->path;
+    
+    Return the base path to the application. Util to build absolute
+    html links:
+    
+    my $link = $app->path . "/example1/hello_world.do"
+
+=cut
 
 sub path {
 	my ($self, $value) = @_;
 
 	return $self->{path};
 }
+
+=item map
+
+    $self->map(%dispatchers);
+    
+    Get/set the dispatchers mappings.
+
+=cut
 
 sub map {
 	my $self = shift;
@@ -236,6 +337,17 @@ sub dump_objects {
     $self->response->write( '</pre>' );
 }
 
+=item config
+
+    $self->config(%config);
+    
+    Get/set application configuration parameters. I.e:
+    $self->config( sessions => 1 ); 
+    #activates session support (default)
+
+=cut
+
+
 sub config {
 	my $self = shift;
 
@@ -258,11 +370,26 @@ sub config {
 	return $self->{config};
 }
 
+=item get
+
+    $self->get('key');
+    
+    Get globals (application) objects.
+
+=cut
+
 sub get {
 	my ($self, $key) = @_;
 	return $self->{data}->{$key};
 }
 
+=item set
+
+    $self->set('key' => $value);
+    
+    Set globals (application) objects.
+
+=cut
 
 sub set {
 	my ($self, $key, $value) = @_;
@@ -278,6 +405,15 @@ sub data {
 	return $_[0]->{data};
 }
 
+=item slot
+
+    $self->slot('plugin_name');
+    
+    Gets a slot corresponding to the specified plugin. 
+    (used in plugin development)
+
+=cut
+
 sub slot {
     my ($self, $key) = @_;
     
@@ -289,21 +425,64 @@ sub slot {
 # Override Instance Methods
 #------------------------------
 
+=item init
+
+    sub init {
+        my $self = shift;
+        
+    	$self->map( 
+            '_default'  =>  'SampleApp::Index',    
+            'example1'  =>  'SampleApp::Example1',
+    	);
+    }
+
+    This method should be overrided to do the proper application
+    initialization.
+
+=cut
+
 sub init {
 	my $self = shift;
     
 	$self->map( '_default'  =>  'Alpaka::Index' );
 }
 
+=item init
+
+    sub cleanup {
+        my $self = shift;
+        
+        $self->dbh->disconnect;
+    }
+
+    This method should be overrided to do the proper application
+    cleanup, i.e: disconnect the db handler, etc.
+
+=cut
+
 sub cleanup {
 	my $self = shift;
 }
+
+=item begin
+
+    This method is called before action execution. You can override 
+    this method to do common heading stuffs, etc.
+
+=cut
 
 sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
 }
+
+=item end
+
+    This method is called after action execution. You can override
+    this method to do common footer stuffs, etc.
+
+=cut
 
 sub end { 
 	my ($self, $request, $response, $session) = @_;

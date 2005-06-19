@@ -4,6 +4,25 @@ use strict;
 use Data::Dumper;
 use attributes;
 
+=head1 NAME
+
+Alpaka::Dispatcher
+
+=head1 SYNOPSIS
+
+    Dispatcher base class
+    
+    package MyDispatcher;
+    use base 'Alpaka::Dispatcher';
+
+    sub my_action : action { ... };
+    
+=cut
+
+=head1 DESCRIPTION
+    
+=cut
+
 #------------------------------
 # Constants
 #------------------------------
@@ -39,6 +58,15 @@ sub _actions {
     return \%$varname;
 }  
 
+=item instance
+
+    A Dispatcher is a Sinlgeton class, you can get an instance of
+    the dispatcher anytime with this method. Should be rarely used
+    because the current dispatcher object is always passed to
+    every action as parameter.
+
+=cut
+
 sub instance {
     my $class = shift;
 
@@ -62,6 +90,12 @@ sub _new_instance {
 #------------------------------
 # Instance Methods
 #------------------------------
+
+=item app
+
+    Get th application object.
+
+=cut
 
 sub app {
 	my ($self, $app) = @_;
@@ -97,6 +131,16 @@ sub _execute {
 	}
 }
 
+=item forward
+
+    $self->forward($action);
+    
+    Forward the control to other action insede the same dispatcher.
+    To do a global (between other dispatcher) forward you should use
+    the forward method from the application class.
+
+=cut
+
 sub forward {
 	my ($self, $action) = @_;
 
@@ -107,17 +151,37 @@ sub forward {
 # Override Instance Methods
 #------------------------------
 
+=item index
+
+    Default action for the dispatcher. Should be overrided.
+
+=cut
+
 sub index : action { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
 }
 
+=item begin
+
+    This method is called before action execution. You can override 
+    this method to do common heading stuffs, etc.
+
+=cut
+
 sub begin { 
 	my ($self, $request, $response, $session) = @_;
 	
     return;
 }
+
+=item end
+
+    This method is called after action execution. You can override
+    this method to do common footer stuffs, etc.
+
+=cut
 
 sub end { 
 	my ($self, $request, $response, $session) = @_;

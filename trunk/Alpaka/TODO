@@ -1,24 +1,14 @@
 Alpaka TODO
 
-22/05/2005 
-
-* Fix dispatcher/action mapping
-options:
-http://test.com/app/dispatcher.action
-http://test.com/app/dispatcher.action.do
-
-http://test.com/app/dispatcher/action.do 			app:app		dis:dispatcher			action:action
-http://test.com/app/dispatcher/nent/action.do		app:app		dis:dispatcher/nent		action:action
-http://test.com/dispatcher/action.do				app:		dis:dispatcher			action:action
-http://test.com/cgi-bin/alpaka.cgi/app/dispatcher/action.do	app:app		dis:dispatcher		action:action
-http://test.com/cgi-bin/alpaka.cgi/dispatcher/action.do		app:		dis:dispatcher		action:action
+18/06/2005 
 
 * Common base class for ModPerl1 & ModPerl2 (6)
 
-* oveload "" (as_string) and bool operators (4)
+* oveload "" (as_string) and bool operators (3)
+  (request, session)
 
 * Apache 1 & 2 configuration examples  (1)
-* Documentation!		(2)
+* Documentation! POD	(2)
 
 * Session as tied hash (ref) ?
 
