@@ -38,7 +38,7 @@ BEGIN {
     my ( $software, $version ) = $ENV{MOD_PERL} =~ /^(\S+)\/(\d+(?:[\.\_]\d+)+)/;
     
     if ( $software eq 'mod_perl') {
-        if ( $version >= 1.999 ) {
+        if ( $version >= 1.99 ) {
             require Alpaka::Response::ModPerl2;
             require Alpaka::Request::ModPerl2;
         }
